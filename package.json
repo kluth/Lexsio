@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "build": "browserify src/main.ts -p [ tsify --project tsconfig.json ] > dist/main.js",
-    "build-editor": "browserify src/editor.ts -p [ tsify --project tsconfig.json ] > dist/editor.js"
+    "build": "mkdir -p dist && browserify src/main.ts -p [ tsify --project tsconfig.json ] > dist/main.js",
+    "build-editor": "mkdir -p dist && browserify src/editor.ts -p [ tsify --project tsconfig.json ] > dist/editor.js"
   },
   "keywords": [],
   "author": "",
