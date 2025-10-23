@@ -1,0 +1,10 @@
+body {
+  font-family: sans-serif;
+  text-align: center;
+}
+
+#grid-canvas {
+  border: 1px solid black;
+  margin: 20px auto;
+  display: block;
+}
