@@ -1,0 +1,96 @@
+<div class="game-container" *ngIf="gameState">
+  <!-- Header -->
+  <header class="game-header">
+    <h1>LIXSO</h1>
+    <p class="subtitle">Logic Puzzle Game</p>
+    <div class="difficulty-badge">Level {{ currentDifficulty }}</div>
+  </header>
+
+  <!-- Game Status -->
+  <div class="game-status" *ngIf="gameState.completed">
+    <div class="completion-message">
+      <h2>🎉 Puzzle Completed!</h2>
+      <p>Congratulations! You solved the puzzle!</p>
+    </div>
+  </div>
+
+  <!-- Game Grid -->
+  <div class="grid-container" (mouseleave)="onMouseLeaveGrid()">
+    <div class="grid"
+         [style.gridTemplateColumns]="'repeat(' + gameState.gridSize + ', 1fr)'"
+         [style.gridTemplateRows]="'repeat(' + gameState.gridSize + ', 1fr)'">
+      <div *ngFor="let row of gameState.grid" class="grid-row">
+        <div *ngFor="let cell of row"
+             [class]="getCellClass(cell)"
+             [style.backgroundColor]="getSymbolColor(cell.symbol)"
+             (click)="onCellClick(cell)"
+             (mouseenter)="onCellHover(cell)">
+          <span class="cell-symbol" *ngIf="cell.symbol">{{ cell.symbol }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <div class="controls">
+    <!-- Symbol Selection -->
+    <div class="control-section">
+      <h3>Select Symbol</h3>
+      <div class="symbol-selector">
+        <button
+          *ngFor="let symbol of [LixsoSymbol.I, LixsoSymbol.X, LixsoSymbol.S, LixsoSymbol.O]"
+          [class.active]="selectedSymbol === symbol"
+          [style.backgroundColor]="SymbolColorMap[symbol]"
+          (click)="selectSymbol(symbol)">
+          {{ symbol }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Orientation Selection -->
+    <div class="control-section">
+      <h3>Tile Orientation</h3>
+      <div class="orientation-selector">
+        <button
+          *ngFor="let orientation of [LTileOrientation.UP_RIGHT, LTileOrientation.DOWN_RIGHT, LTileOrientation.DOWN_LEFT, LTileOrientation.UP_LEFT]"
+          [class.active]="selectedOrientation === orientation"
+          (click)="selectOrientation(orientation)">
+          {{ getOrientationDisplay(orientation) }}
+        </button>
+      </div>
+      <button class="rotate-btn" (click)="rotateOrientation()">
+        🔄 Rotate
+      </button>
+    </div>
+
+    <!-- Game Actions -->
+    <div class="control-section actions">
+      <button class="btn btn-secondary" (click)="getHint()">💡 Hint</button>
+      <button class="btn btn-warning" (click)="resetGame()">🔄 Reset</button>
+    </div>
+
+    <!-- Difficulty Selection -->
+    <div class="control-section">
+      <h3>New Game</h3>
+      <div class="difficulty-selector">
+        <button
+          *ngFor="let level of [1, 2, 3, 4, 5, 6]"
+          [class.active]="currentDifficulty === level"
+          (click)="startNewGame(level)">
+          Level {{ level }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game Info -->
+  <div class="game-info">
+    <p><strong>How to Play:</strong></p>
+    <ul>
+      <li>Fill the grid with L-shaped tiles</li>
+      <li>Same symbols/colors cannot touch (sides or corners)</li>
+      <li>Each tile covers exactly 3 cells</li>
+      <li>Click on a cell to place the selected tile</li>
+    </ul>
+  </div>
+</div>

@@ -1,0 +1,31 @@
+<div class="app-container">
+  <!-- Game Menu -->
+  <app-game-menu
+    *ngIf="currentView === 'menu'"
+    (modeSelected)="onModeSelected($event)"
+    (viewHighscores)="onViewHighscores()"
+    (viewTournaments)="onViewTournaments()">
+  </app-game-menu>
+
+  <!-- Game Board -->
+  <div *ngIf="currentView === 'game'">
+    <button class="back-button" (click)="backToMenu()">← Back to Menu</button>
+    <app-game-board></app-game-board>
+  </div>
+
+  <!-- Highscores View -->
+  <div *ngIf="currentView === 'highscores'" class="view-container">
+    <button class="back-button" (click)="backToMenu()">← Back to Menu</button>
+    <h2>Highscores</h2>
+    <p>Highscores view coming soon!</p>
+  </div>
+
+  <!-- Tournaments View -->
+  <div *ngIf="currentView === 'tournaments'" class="view-container">
+    <button class="back-button" (click)="backToMenu()">← Back to Menu</button>
+    <h2>Tournaments</h2>
+    <p>Tournaments view coming soon!</p>
+  </div>
+
+  <router-outlet></router-outlet>
+</div>

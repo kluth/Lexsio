@@ -1,0 +1,73 @@
+<div class="game-menu">
+  <!-- Header -->
+  <div class="menu-header">
+    <h1>🎮 LIXSO</h1>
+    <p class="tagline">The Ultimate Logic Puzzle Game</p>
+  </div>
+
+  <!-- Player Info -->
+  <div class="player-info">
+    <label for="playerName">Player Name:</label>
+    <input
+      id="playerName"
+      type="text"
+      [value]="playerName"
+      (blur)="updatePlayerName($event)"
+      maxlength="20"
+      placeholder="Enter your name"
+    />
+  </div>
+
+  <!-- Difficulty Selector -->
+  <div class="difficulty-selector">
+    <h3>Select Difficulty</h3>
+    <div class="difficulty-buttons">
+      <button
+        *ngFor="let level of [1, 2, 3, 4, 5, 6]"
+        [class.active]="selectedDifficulty === level"
+        (click)="selectedDifficulty = level">
+        Level {{ level }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Game Modes -->
+  <div class="game-modes">
+    <h2>Choose Your Game Mode</h2>
+    <div class="modes-grid">
+      <div
+        *ngFor="let mode of gameModes"
+        class="mode-card"
+        (click)="selectMode(mode.mode)">
+        <div class="mode-icon">{{ mode.icon }}</div>
+        <h3>{{ mode.name }}</h3>
+        <p>{{ mode.description }}</p>
+        <div class="mode-details">
+          <span *ngIf="mode.timeLimit">⏱️ {{ mode.timeLimit }}s</span>
+          <span *ngIf="mode.moveLimit">🎲 {{ mode.moveLimit }} moves</span>
+          <span class="score-multiplier">⭐ {{ mode.scoreMultiplier }}x</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Additional Options -->
+  <div class="menu-actions">
+    <button class="btn btn-secondary" (click)="onViewHighscores()">
+      🏆 Highscores
+    </button>
+    <button class="btn btn-secondary" (click)="onViewTournaments()">
+      🎪 Tournaments
+    </button>
+  </div>
+
+  <!-- Game Info -->
+  <div class="game-info-footer">
+    <p><strong>How to Play:</strong></p>
+    <ul>
+      <li>Fill the grid with L-shaped tiles (3 cells each)</li>
+      <li>Same symbols/colors cannot touch (sides or corners)</li>
+      <li>Complete the puzzle to earn points!</li>
+    </ul>
+  </div>
+</div>
