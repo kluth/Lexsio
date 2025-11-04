@@ -1,4 +1,6 @@
+import { describe, it, expect, beforeEach } from 'vitest';
 import { TestBed } from '@angular/core/testing';
+import { firstValueFrom } from 'rxjs';
 import { Game } from './game';
 import {
   LixsoSymbol,
@@ -22,17 +24,15 @@ describe('Game Service', () => {
   });
 
   describe('Game Initialization', () => {
-    it('should initialize game with empty grid', (done) => {
-      service.getGameState().subscribe(state => {
-        expect(state.grid).toBeDefined();
-        expect(state.grid.length).toBeGreaterThan(0);
-        expect(state.placedTiles).toEqual([]);
-        expect(state.completed).toBe(false);
-        done();
-      });
+    it('should initialize game with empty grid', async () => {
+      const state = await firstValueFrom(service.getGameState());
+      expect(state.grid).toBeDefined();
+      expect(state.grid.length).toBeGreaterThan(0);
+      expect(state.placedTiles).toEqual([]);
+      expect(state.completed).toBe(false);
     });
 
-    it('should start new game with puzzle definition', (done) => {
+    it('should start new game with puzzle definition', async () => {
       const puzzle: PuzzleDefinition = {
         gridSize: 6,
         difficulty: 1,
@@ -44,14 +44,12 @@ describe('Game Service', () => {
 
       service.startNewGame(puzzle);
 
-      service.getGameState().subscribe(state => {
-        expect(state.gridSize).toBe(6);
-        expect(state.grid[0][0].symbol).toBe(LixsoSymbol.I);
-        expect(state.grid[0][0].prefilled).toBe(true);
-        expect(state.grid[2][2].symbol).toBe(LixsoSymbol.X);
-        expect(state.grid[2][2].prefilled).toBe(true);
-        done();
-      });
+      const state = await firstValueFrom(service.getGameState());
+      expect(state.gridSize).toBe(6);
+      expect(state.grid[0][0].symbol).toBe(LixsoSymbol.I);
+      expect(state.grid[0][0].prefilled).toBe(true);
+      expect(state.grid[2][2].symbol).toBe(LixsoSymbol.X);
+      expect(state.grid[2][2].prefilled).toBe(true);
     });
   });
 
@@ -93,7 +91,7 @@ describe('Game Service', () => {
       expect(result).toBe(false);
     });
 
-    it('should reject tile placement on occupied cells', (done) => {
+    it('should reject tile placement on occupied cells', () => {
       const tile1: LTile = {
         id: 'test-tile-3',
         symbol: LixsoSymbol.I,
@@ -116,7 +114,6 @@ describe('Game Service', () => {
 
       const result = service.placeTile(tile2);
       expect(result).toBe(false);
-      done();
     });
 
     it('should reject tile when same symbols would touch', () => {
@@ -210,7 +207,7 @@ describe('Game Service', () => {
   });
 
   describe('Game Completion', () => {
-    it('should detect when grid is complete', (done) => {
+    it('should detect when grid is complete', async () => {
       const puzzle: PuzzleDefinition = {
         gridSize: 6,
         difficulty: 1,
@@ -228,16 +225,14 @@ describe('Game Service', () => {
 
       tiles.forEach(tile => service.placeTile(tile));
 
-      service.getGameState().subscribe(state => {
-        // We expect the game to track completion status
-        expect(state.completed).toBeDefined();
-        done();
-      });
+      const state = await firstValueFrom(service.getGameState());
+      // We expect the game to track completion status
+      expect(state.completed).toBeDefined();
     });
   });
 
   describe('Game Reset', () => {
-    it('should reset game to initial state', (done) => {
+    it('should reset game to initial state', async () => {
       const puzzle: PuzzleDefinition = {
         gridSize: 9,
         difficulty: 1,
@@ -261,14 +256,12 @@ describe('Game Service', () => {
       // Reset
       service.resetGame();
 
-      service.getGameState().subscribe(state => {
-        expect(state.placedTiles.length).toBe(0);
-        expect(state.completed).toBe(false);
-        // Prefilled cells should remain
-        expect(state.grid[0][0].symbol).toBe(LixsoSymbol.I);
-        expect(state.grid[0][0].prefilled).toBe(true);
-        done();
-      });
+      const state = await firstValueFrom(service.getGameState());
+      expect(state.placedTiles.length).toBe(0);
+      expect(state.completed).toBe(false);
+      // Prefilled cells should remain
+      expect(state.grid[0][0].symbol).toBe(LixsoSymbol.I);
+      expect(state.grid[0][0].prefilled).toBe(true);
     });
   });
 
