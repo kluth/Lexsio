@@ -30,11 +30,11 @@ declare global {
         capabilities(): Promise<AILanguageModelCapabilities>;
         create(options?: AILanguageModelCreateOptions): Promise<AILanguageModel>;
       };
-      // Future APIs
-      summarizer?: any;
-      translator?: any;
-      writer?: any;
-      rewriter?: any;
+      // Future APIs (not yet implemented)
+      summarizer?: unknown;
+      translator?: unknown;
+      writer?: unknown;
+      rewriter?: unknown;
     };
   }
 
@@ -104,6 +104,7 @@ export class AIHintService {
   private session: AILanguageModel | null = null;
 
   constructor() {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     this.detectChromeAI();
   }
 
@@ -121,12 +122,11 @@ export class AIHintService {
           promptAPI: caps.available !== 'no',
         }));
 
-        console.log('[AI Hint] Chrome AI Status:', caps.available);
-
+        // Chrome AI Status check
         if (caps.available === 'after-download') {
-          console.log('[AI Hint] Gemini Nano requires download. Will fallback to heuristics.');
+          // Gemini Nano requires download. Will fallback to heuristics.
         } else if (caps.available === 'readily') {
-          console.log('[AI Hint] Gemini Nano is ready! 🚀');
+          // Gemini Nano is ready!
         }
       } else {
         console.warn('[AI Hint] Chrome AI not available. Using heuristics only.');
@@ -164,11 +164,7 @@ Always respond in a friendly, educational tone.`;
         topK: caps.defaultTopK || 3,
       });
 
-      console.log('[AI Hint] Gemini Nano session initialized successfully! 🎉');
-      console.log(
-        `[AI Hint] Max tokens: ${this.session.maxTokens}, Tokens left: ${this.session.tokensLeft}`
-      );
-
+      // Gemini Nano session initialized successfully
       return this.session;
     } catch (error) {
       console.error('[AI Hint] Error initializing Gemini Nano session:', error);
@@ -192,7 +188,6 @@ Always respond in a friendly, educational tone.`;
       const cacheKey = this.getCacheKey(grid, level, type);
       const cached = this.getFromCache(cacheKey);
       if (cached) {
-        console.log('[AI Hint] Cache hit!');
         return cached;
       }
 
@@ -215,7 +210,7 @@ Always respond in a friendly, educational tone.`;
       }
 
       // Fallback to heuristics
-      const hint = await this.generateHeuristicHint(grid, analysis, level, type);
+      const hint = this.generateHeuristicHint(grid, analysis, level, type);
       this.updateStatistics(startTime, 'heuristic');
       this.addToCache(cacheKey, hint);
       return hint;
@@ -370,12 +365,12 @@ Respond in this JSON format:
       // Try to extract JSON from response
       const jsonMatch = response.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
-        const parsed = JSON.parse(jsonMatch[0]);
+        const parsed = JSON.parse(jsonMatch[0]) as Partial<ChromeAIHintResponse>;
         return {
-          hint: parsed.hint || 'Consider your next move carefully',
-          reasoning: parsed.reasoning || 'Analyze the board patterns',
+          hint: parsed.hint ?? 'Consider your next move carefully',
+          reasoning: parsed.reasoning ?? 'Analyze the board patterns',
           suggestedMove: parsed.suggestedMove,
-          confidence: parsed.confidence || 0.7,
+          confidence: parsed.confidence ?? 0.7,
         };
       }
 
@@ -398,12 +393,12 @@ Respond in this JSON format:
   /**
    * Generate heuristic hint (fallback)
    */
-  private async generateHeuristicHint(
+  private generateHeuristicHint(
     grid: GridCell[][],
     analysis: BoardAnalysis,
     level: HintLevel,
     type: HintType
-  ): Promise<AIHint> {
+  ): AIHint {
     // Simple heuristic: find first valid tile placement
     const suggestion = this.findBestMove(grid, analysis);
 
@@ -639,7 +634,7 @@ Respond in this JSON format:
     this.cache.clear();
   }
 
-  public async destroy(): Promise<void> {
+  public destroy(): void {
     if (this.session) {
       this.session.destroy();
       this.session = null;

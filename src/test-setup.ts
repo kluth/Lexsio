@@ -12,5 +12,5 @@ getTestBed().initTestEnvironment(BrowserDynamicTestingModule, platformBrowserDyn
 
 // Setup global test utilities
 if (typeof global.structuredClone === 'undefined') {
-  global.structuredClone = (val: any) => JSON.parse(JSON.stringify(val));
+  global.structuredClone = <T>(val: T): T => JSON.parse(JSON.stringify(val)) as T;
 }

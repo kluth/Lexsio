@@ -50,7 +50,7 @@ export interface Goal {
 export interface PlayerAction {
   type: 'tile-placed' | 'tile-removed' | 'puzzle-completed' | 'hint-used' | 'error-made';
   timestamp: Date;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface EngagementMetrics {

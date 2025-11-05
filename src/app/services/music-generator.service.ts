@@ -84,7 +84,7 @@ export class MusicGeneratorService {
   /**
    * Initialize Tone.js audio context
    */
-  private async initializeAudio(): Promise<void> {
+  private initializeAudio(): void {
     try {
       // Create polyphonic synthesizer
       this.synth = new Tone.PolySynth(Tone.Synth, {
@@ -103,7 +103,6 @@ export class MusicGeneratorService {
       this.synth.volume.value = this.volumeToDb(this.config().volume);
 
       this.initialized = true;
-      console.log('[Music] Tone.js initialized successfully! 🎵');
     } catch (error) {
       console.error('[Music] Failed to initialize audio:', error);
     }
@@ -211,7 +210,7 @@ export class MusicGeneratorService {
   /**
    * Play a melody (sequence of notes)
    */
-  private async playMelody(notes: TileNote[]): Promise<void> {
+  private playMelody(notes: TileNote[]): void {
     if (!this.synth || notes.length === 0) return;
 
     const _config = this.config();
@@ -273,7 +272,7 @@ export class MusicGeneratorService {
    * Public API
    */
 
-  public async setVolume(volume: number): Promise<void> {
+  public setVolume(volume: number): void {
     const clampedVolume = Math.max(0, Math.min(1, volume));
     this.config.update((c) => ({ ...c, volume: clampedVolume }));
 
@@ -386,12 +385,11 @@ export class MusicGeneratorService {
   /**
    * Cleanup
    */
-  public async destroy(): Promise<void> {
+  public destroy(): void {
     if (this.synth) {
       this.synth.dispose();
       this.synth = null;
     }
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     Tone.getContext().dispose();
     this.initialized = false;
   }
