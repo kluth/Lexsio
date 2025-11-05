@@ -1,4 +1,4 @@
-name: CI/CD Pipeline - Deploy to GitHub Pages
+name: CI - Optimized Pipeline
 
 on:
   push:
@@ -12,20 +12,27 @@ on:
       - master
   workflow_dispatch:
 
+# Cancel in-progress runs for the same workflow and branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
   pages: write
   id-token: write
+  pull-requests: write
+  checks: write
 
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
+env:
+  NODE_VERSION: '22'
+  PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'  # We'll cache browsers separately
 
 jobs:
-  # Build and Test Job
-  build-and-test:
+  # Quick checks that can fail fast
+  quick-checks:
+    name: Quick Checks (Lint)
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -33,7 +40,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
 
       - name: Install dependencies
@@ -42,36 +49,205 @@ jobs:
       - name: Run linter
         run: npm run lint || true
 
-      - name: Run tests with Vitest
+  # Unit tests in parallel on multiple Node versions
+  unit-tests:
+    name: Unit Tests (Node ${{ matrix.node-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20.x, 22.x]
+      fail-fast: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run unit tests with coverage
         run: npm run test:coverage
+
+      - name: Generate coverage summary
+        if: matrix.node-version == '22.x'
+        run: |
+          echo "## 📊 Test Coverage Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -f coverage/coverage-summary.json ]; then
+            node -e "
+            const fs = require('fs');
+            const coverage = JSON.parse(fs.readFileSync('coverage/coverage-summary.json', 'utf8'));
+            const total = coverage.total;
+            console.log('| Metric | Coverage |');
+            console.log('|--------|----------|');
+            console.log('| Lines | ' + total.lines.pct + '% |');
+            console.log('| Statements | ' + total.statements.pct + '% |');
+            console.log('| Functions | ' + total.functions.pct + '% |');
+            console.log('| Branches | ' + total.branches.pct + '% |');
+            " >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4
+        if: matrix.node-version == '22.x'
+        with:
+          files: ./coverage/lcov.info
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
+        continue-on-error: true
+
+      - name: Comment PR with coverage
+        uses: davelosert/vitest-coverage-report-action@v2
+        if: github.event_name == 'pull_request' && matrix.node-version == '22.x'
+        with:
+          json-summary-path: ./coverage/coverage-summary.json
+          json-final-path: ./coverage/coverage-final.json
+        continue-on-error: true
+
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v4
+        if: matrix.node-version == '22.x'
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 30
+          compression-level: 6
+
+  # Build job - runs in parallel with tests
+  build:
+    name: Build Application
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Cache Angular build cache
+      - name: Cache Angular build
+        uses: actions/cache@v4
+        with:
+          path: |
+            .angular/cache
+            dist
+          key: ${{ runner.os }}-angular-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('src/**/*') }}
+          restore-keys: |
+            ${{ runner.os }}-angular-${{ hashFiles('**/package-lock.json') }}-
+            ${{ runner.os }}-angular-
 
       - name: Build application
         run: npm run build -- --base-href /lixso/
 
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps
+      - name: Calculate bundle size
+        id: bundle-size
+        run: |
+          TOTAL_SIZE=$(du -sb dist/lixso-game/browser | cut -f1)
+          TOTAL_SIZE_MB=$(echo "scale=2; $TOTAL_SIZE / 1024 / 1024" | bc)
+          echo "total_size=$TOTAL_SIZE" >> $GITHUB_OUTPUT
+          echo "total_size_mb=$TOTAL_SIZE_MB" >> $GITHUB_OUTPUT
 
-      - name: Run E2E tests
-        run: npm run test:e2e
-
-      - name: Upload Playwright report on failure
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 7
+          echo "## 📦 Bundle Size" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Total size: **${TOTAL_SIZE_MB} MB**" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Files:" >> $GITHUB_STEP_SUMMARY
+          ls -lh dist/lixso-game/browser/*.js dist/lixso-game/browser/*.css 2>/dev/null | awk '{print "- " $9 ": " $5}' >> $GITHUB_STEP_SUMMARY || true
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: dist
           path: dist/lixso-game/browser
-          retention-days: 1
+          retention-days: 7
+          compression-level: 6
 
-  # Deploy to GitHub Pages Job
+  # E2E tests with browser caching
+  e2e-tests:
+    name: E2E Tests (Chromium)
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Cache Playwright browsers - HUGE time saver!
+      - name: Get Playwright version
+        id: playwright-version
+        run: echo "version=$(npm list @playwright/test --depth=0 --json | jq -r '.dependencies["@playwright/test"].version')" >> $GITHUB_OUTPUT
+
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
+      - name: Install Playwright browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps
+
+      - name: Install Playwright browser dependencies only
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/lixso-game/browser
+
+      - name: Run E2E tests
+        run: npm run test:e2e
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14
+          compression-level: 9
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-test-results
+          path: test-results/
+          retention-days: 14
+          compression-level: 9
+
+  # Deploy only on main/master
   deploy:
-    needs: build-and-test
+    name: Deploy to GitHub Pages
+    needs: [unit-tests, build, e2e-tests]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
 
@@ -98,14 +274,43 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-  # Notification Job (optional)
-  notify:
-    needs: [build-and-test, deploy]
+      - name: Comment deployment URL on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '🚀 Deployed to GitHub Pages: ${{ steps.deployment.outputs.page_url }}'
+            })
+
+  # Workflow summary
+  summary:
+    name: Workflow Summary
+    needs: [quick-checks, unit-tests, build, e2e-tests]
     runs-on: ubuntu-latest
     if: always()
 
     steps:
-      - name: Build Status
+      - name: Generate workflow summary
         run: |
-          echo "Build and Test: ${{ needs.build-and-test.result }}"
-          echo "Deploy: ${{ needs.deploy.result }}"
+          echo "## 🎯 Workflow Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Job | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Quick Checks | ${{ needs.quick-checks.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Unit Tests | ${{ needs.unit-tests.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Build | ${{ needs.build.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| E2E Tests | ${{ needs.e2e-tests.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [[ "${{ needs.quick-checks.result }}" == "success" ]] && \
+             [[ "${{ needs.unit-tests.result }}" == "success" ]] && \
+             [[ "${{ needs.build.result }}" == "success" ]] && \
+             [[ "${{ needs.e2e-tests.result }}" == "success" ]]; then
+            echo "✅ **All checks passed!**" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Some checks failed. Please review the logs above.**" >> $GITHUB_STEP_SUMMARY
+          fi
