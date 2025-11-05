@@ -255,7 +255,6 @@ export class MusicGeneratorService {
   private async ensureAudioContext(): Promise<void> {
     if (Tone.context.state !== 'running') {
       await Tone.start();
-      console.log('[Music] Audio context started');
     }
   }
 
@@ -264,8 +263,8 @@ export class MusicGeneratorService {
    */
   public exportAsMIDI(grid: GridCell[][], _filename: string = 'lixso-puzzle.mid'): void {
     // This would require additional MIDI export library
-    console.log('[Music] MIDI export not yet implemented');
     // TODO: Implement MIDI export using @tonejs/midi
+    // Not yet implemented
   }
 
   /**
