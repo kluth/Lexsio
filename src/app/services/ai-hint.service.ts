@@ -13,7 +13,7 @@ import {
   PlayerContext,
   HintCacheEntry
 } from '../models/ai-hint.models';
-import { GridCell, LTile, CellSymbol } from '../models/game.models';
+import { GridCell, LTile, LixsoSymbol, LTileOrientation } from '../models/game.models';
 
 /**
  * AI-Powered Hint Service
@@ -259,8 +259,8 @@ Always respond in a friendly, educational tone.`;
         explanation: parsed.reasoning,
         suggestedTile: parsed.suggestedMove ? this.createTileFromMove(parsed.suggestedMove) : undefined,
         suggestedPosition: parsed.suggestedMove ? {
-          row: parsed.suggestedMove.row,
-          col: parsed.suggestedMove.col
+          row: parsed.suggestedMove.anchorRow,
+          col: parsed.suggestedMove.anchorCol
         } : undefined,
         confidence: parsed.confidence,
         reasoning: parsed.reasoning,
@@ -427,17 +427,25 @@ Respond in this JSON format:
     position: { row: number; col: number };
   } {
     // Simple heuristic: find first valid placement
-    const symbols: CellSymbol[] = ['I', 'X', 'S', 'O'];
+    const symbols: LixsoSymbol[] = [LixsoSymbol.I, LixsoSymbol.X, LixsoSymbol.S, LixsoSymbol.O];
+    const orientations: LTileOrientation[] = [
+      LTileOrientation.UP_RIGHT,
+      LTileOrientation.DOWN_RIGHT,
+      LTileOrientation.DOWN_LEFT,
+      LTileOrientation.UP_LEFT
+    ];
 
     for (let row = 0; row < grid.length - 2; row++) {
       for (let col = 0; col < grid[row].length - 2; col++) {
         for (const symbol of symbols) {
-          for (let orientation = 0; orientation < 4; orientation++) {
+          for (const orientation of orientations) {
             const tile: LTile = {
+              id: `hint-tile-${Date.now()}`,
               symbol,
               orientation,
-              row,
-              col
+              anchorRow: row,
+              anchorCol: col,
+              placed: false
             };
 
             if (this.isValidPlacement(grid, tile)) {
@@ -450,7 +458,14 @@ Respond in this JSON format:
 
     // Fallback
     return {
-      tile: { symbol: 'I', orientation: 0, row: 0, col: 0 },
+      tile: {
+        id: 'fallback-tile',
+        symbol: LixsoSymbol.I,
+        orientation: LTileOrientation.UP_RIGHT,
+        anchorRow: 0,
+        anchorCol: 0,
+        placed: false
+      },
       position: { row: 0, col: 0 }
     };
   }
@@ -478,7 +493,7 @@ Respond in this JSON format:
           emptyCount++;
         } else {
           filledCount++;
-          if (cell.isPrefilled) prefillCount++;
+          if (cell.prefilled) prefillCount++;
         }
       }
     }
@@ -542,7 +557,9 @@ Respond in this JSON format:
     // Limit cache size
     if (this.cache.size > 100) {
       const firstKey = this.cache.keys().next().value;
-      this.cache.delete(firstKey);
+      if (firstKey) {
+        this.cache.delete(firstKey);
+      }
     }
   }
 
@@ -562,12 +579,14 @@ Respond in this JSON format:
     return Math.round(response.confidence * 100);
   }
 
-  private createTileFromMove(move: { symbol: CellSymbol; orientation: number; row: number; col: number }): LTile {
+  private createTileFromMove(move: { symbol: LixsoSymbol; orientation: LTileOrientation; anchorRow: number; anchorCol: number }): LTile {
     return {
+      id: `tile-${Date.now()}`,
       symbol: move.symbol,
       orientation: move.orientation,
-      row: move.row,
-      col: move.col
+      anchorRow: move.anchorRow,
+      anchorCol: move.anchorCol,
+      placed: false
     };
   }
 

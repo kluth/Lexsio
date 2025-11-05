@@ -259,7 +259,7 @@ export class ThemeService {
       }
     };
 
-    return palettes[theme] || palettes.light;
+    return palettes[theme] || palettes['light'];
   }
 
   /**
