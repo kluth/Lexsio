@@ -1,4 +1,4 @@
-import { Injectable, signal, effect } from '@angular/core';
+import { effect, Injectable, signal } from '@angular/core';
 
 /**
  * Theme Service
@@ -21,11 +21,11 @@ const DEFAULT_THEME: ThemeSettings = {
   mode: 'auto',
   colorblindMode: 'none',
   fontSize: 100,
-  reduceMotion: false
+  reduceMotion: false,
 };
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ThemeService {
   private readonly STORAGE_KEY = 'lixso-theme-settings';
@@ -65,7 +65,7 @@ export class ThemeService {
    * Update theme settings
    */
   public updateSettings(partial: Partial<ThemeSettings>): void {
-    this.theme.update(current => ({ ...current, ...partial }));
+    this.theme.update((current) => ({ ...current, ...partial }));
   }
 
   /**
@@ -172,7 +172,7 @@ export class ThemeService {
     return {
       ...DEFAULT_THEME,
       mode: prefersDark ? 'dark' : 'light',
-      reduceMotion: prefersReducedMotion
+      reduceMotion: prefersReducedMotion,
     };
   }
 
@@ -256,7 +256,7 @@ export class ThemeService {
         tileX: '#ff00ff',
         tileS: '#ffff00',
         tileO: '#00ff00',
-      }
+      },
     };
 
     return palettes[theme] || palettes['light'];
@@ -270,19 +270,22 @@ export class ThemeService {
 
     // Simplified colorblind-friendly palette adjustments
     const colorblindPalettes: Record<string, Record<string, string>> = {
-      protanopia: { // Red-blind
+      protanopia: {
+        // Red-blind
         '#3498db': '#0077bb', // Blue - stronger
         '#e74c3c': '#882255', // Red → Purple
         '#f39c12': '#ddaa33', // Orange
         '#27ae60': '#44aa99', // Green → Teal
       },
-      deuteranopia: { // Green-blind
+      deuteranopia: {
+        // Green-blind
         '#3498db': '#0077bb', // Blue
         '#e74c3c': '#cc3311', // Red
         '#f39c12': '#ee8866', // Orange
         '#27ae60': '#0077bb', // Green → Blue
       },
-      tritanopia: { // Blue-blind
+      tritanopia: {
+        // Blue-blind
         '#3498db': '#ee3377', // Blue → Magenta
         '#e74c3c': '#cc3311', // Red
         '#f39c12': '#ddaa33', // Orange
@@ -293,7 +296,7 @@ export class ThemeService {
         '#e74c3c': '#333333',
         '#f39c12': '#999999',
         '#27ae60': '#cccccc',
-      }
+      },
     };
 
     return colorblindPalettes[mode]?.[color] || color;

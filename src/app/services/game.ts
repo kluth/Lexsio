@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+
 import {
   GameState,
   GridCell,
-  LTile,
   LixsoSymbol,
-  LTileOrientation,
   LShapePositions,
-  PuzzleDefinition
+  LTile,
+  LTileOrientation,
+  PuzzleDefinition,
 } from '../models/game.models';
 
 @Injectable({
@@ -30,7 +31,7 @@ export class Game {
           col,
           symbol: null,
           prefilled: false,
-          highlighted: false
+          highlighted: false,
         };
       }
     }
@@ -41,7 +42,7 @@ export class Game {
       placedTiles: [],
       currentTile: null,
       difficulty,
-      completed: false
+      completed: false,
     };
   }
 
@@ -49,7 +50,7 @@ export class Game {
     const state = this.initializeGame(puzzle.gridSize, puzzle.difficulty);
 
     // Set prefilled cells
-    puzzle.prefilledCells.forEach(cell => {
+    puzzle.prefilledCells.forEach((cell) => {
       if (state.grid[cell.row] && state.grid[cell.row][cell.col]) {
         state.grid[cell.row][cell.col].symbol = cell.symbol;
         state.grid[cell.row][cell.col].prefilled = true;
@@ -101,9 +102,14 @@ export class Game {
 
     // Check all 8 neighboring cells (including diagonals)
     const neighbors = [
-      {r: -1, c: -1}, {r: -1, c: 0}, {r: -1, c: 1},
-      {r: 0, c: -1},                 {r: 0, c: 1},
-      {r: 1, c: -1},  {r: 1, c: 0},  {r: 1, c: 1}
+      { r: -1, c: -1 },
+      { r: -1, c: 0 },
+      { r: -1, c: 1 },
+      { r: 0, c: -1 },
+      { r: 0, c: 1 },
+      { r: 1, c: -1 },
+      { r: 1, c: 0 },
+      { r: 1, c: 1 },
     ];
 
     for (const n of neighbors) {
@@ -150,7 +156,7 @@ export class Game {
   // Remove a tile from the grid
   removeTile(tileId: string): boolean {
     const state = this.gameState$.value;
-    const tileIndex = state.placedTiles.findIndex(t => t.id === tileId);
+    const tileIndex = state.placedTiles.findIndex((t) => t.id === tileId);
 
     if (tileIndex === -1) {
       return false;
@@ -222,7 +228,7 @@ export class Game {
     const state = this.gameState$.value;
 
     // Clear all placed tiles
-    state.placedTiles.forEach(tile => {
+    state.placedTiles.forEach((tile) => {
       const positions = LShapePositions[tile.orientation];
       for (const offset of positions) {
         const row = tile.anchorRow + offset.row;
@@ -257,7 +263,7 @@ export class Game {
               orientation,
               anchorRow: row,
               anchorCol: col,
-              placed: false
+              placed: false,
             };
 
             if (this.canPlaceTile(testTile)) {

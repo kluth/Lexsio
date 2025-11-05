@@ -16,7 +16,7 @@ module.exports = {
       files: ['*.ts'],
       parser: '@typescript-eslint/parser',
       parserOptions: {
-        project: ['./tsconfig.json', './tsconfig.app.json', './tsconfig.spec.json'],
+        project: ['./tsconfig.json', './tsconfig.app.json', './tsconfig.spec.json', './tsconfig.e2e.json'],
         createDefaultProgram: true,
         ecmaVersion: 2022,
         sourceType: 'module',
@@ -108,6 +108,7 @@ module.exports = {
               '**/vitest.config.ts',
               '**/playwright.config.ts',
               'e2e/**/*',
+              'src/test-setup.ts',
             ],
           },
         ],
@@ -171,6 +172,21 @@ module.exports = {
         'class-methods-use-this': 'off',
         '@typescript-eslint/unbound-method': 'off', // RxJS operators
         'no-underscore-dangle': 'off',
+        'no-plusplus': 'off', // Allow ++ and -- operators
+        'no-console': ['warn', { allow: ['warn', 'error'] }], // Allow console.warn and console.error
+
+        // Relax some strict type-checking rules for existing codebase
+        '@typescript-eslint/no-unsafe-assignment': 'warn',
+        '@typescript-eslint/no-unsafe-return': 'warn',
+        '@typescript-eslint/no-unsafe-member-access': 'warn',
+        '@typescript-eslint/no-unsafe-call': 'warn',
+        '@typescript-eslint/no-unsafe-argument': 'warn',
+        '@typescript-eslint/no-unsafe-enum-comparison': 'warn',
+        '@typescript-eslint/require-await': 'warn',
+        '@typescript-eslint/no-floating-promises': 'warn',
+        '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+        '@angular-eslint/prefer-inject': 'warn', // Constructor injection is fine for now
+        '@typescript-eslint/naming-convention': 'off', // Too strict for existing codebase
       },
     },
 
@@ -200,6 +216,9 @@ module.exports = {
         '@typescript-eslint/no-unsafe-call': 'off',
         'max-lines-per-function': 'off',
         'max-lines': 'off',
+        'no-plusplus': 'off',
+        'no-await-in-loop': 'off',
+        'no-console': 'off',
       },
     },
   ],

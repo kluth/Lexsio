@@ -3,43 +3,35 @@
 
 :root {
   // Light Theme (Default)
-  --bg-primary: #ffffff;
+  --bg-primary: #fff;
   --bg-secondary: #f5f7fa;
   --bg-tertiary: #e1e8ed;
-
   --text-primary: #2c3e50;
   --text-secondary: #7f8c8d;
   --text-tertiary: #95a5a6;
-
   --color-primary: #667eea;
   --color-secondary: #764ba2;
   --color-accent: #3498db;
-
   --color-success: #27ae60;
   --color-warning: #f39c12;
   --color-error: #e74c3c;
   --color-info: #3498db;
-
   --border-color: #e1e8ed;
   --border-radius: 8px;
-
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 5%);
+  --shadow-md: 0 4px 6px rgb(0 0 0 / 10%);
+  --shadow-lg: 0 10px 15px rgb(0 0 0 / 10%);
 
   // Tile colors
   --tile-i-color: #3498db; // Blue
   --tile-i-bg: #ebf5fb;
   --tile-i-border: #85c1e9;
-
   --tile-x-color: #e74c3c; // Red
   --tile-x-bg: #fadbd8;
   --tile-x-border: #f1948a;
-
   --tile-s-color: #f39c12; // Orange
   --tile-s-bg: #fef5e7;
   --tile-s-border: #f8c471;
-
   --tile-o-color: #27ae60; // Green
   --tile-o-bg: #eafaf1;
   --tile-o-border: #82e0aa;

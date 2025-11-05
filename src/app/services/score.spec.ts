@@ -1,15 +1,16 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { firstValueFrom } from 'rxjs';
-import { ScoreService } from './score';
+
 import { GameMode, GameStats, Score } from '../models/game-modes.models';
+
+import { ScoreService } from './score';
 
 describe('ScoreService', () => {
   let service: ScoreService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [ScoreService]
+      providers: [ScoreService],
     });
     service = TestBed.inject(ScoreService);
 
@@ -75,7 +76,7 @@ describe('ScoreService', () => {
         hints: 0,
         errors: 0,
         timeElapsed: 60,
-        completed: true
+        completed: true,
       };
 
       const score = service.calculateScore(stats, GameMode.CLASSIC, 1, 1.0);
@@ -90,12 +91,12 @@ describe('ScoreService', () => {
         hints: 0,
         errors: 0,
         timeElapsed: 60,
-        completed: true
+        completed: true,
       };
 
       const statsWithErrors: GameStats = {
         ...statsNoErrors,
-        errors: 5
+        errors: 5,
       };
 
       const scoreNoErrors = service.calculateScore(statsNoErrors, GameMode.CLASSIC, 1, 1.0);
@@ -112,12 +113,12 @@ describe('ScoreService', () => {
         hints: 0,
         errors: 0,
         timeElapsed: 60,
-        completed: true
+        completed: true,
       };
 
       const statsWithHints: GameStats = {
         ...statsNoHints,
-        hints: 3
+        hints: 3,
       };
 
       const scoreNoHints = service.calculateScore(statsNoHints, GameMode.CLASSIC, 1, 1.0);
@@ -134,7 +135,7 @@ describe('ScoreService', () => {
         hints: 0,
         errors: 0,
         timeElapsed: 60,
-        completed: true
+        completed: true,
       };
 
       const scoreLevel1 = service.calculateScore(stats, GameMode.CLASSIC, 1, 1.0);
@@ -151,7 +152,7 @@ describe('ScoreService', () => {
         hints: 0,
         errors: 0,
         timeElapsed: 60,
-        completed: true
+        completed: true,
       };
 
       const score1x = service.calculateScore(stats, GameMode.CLASSIC, 1, 1.0);
@@ -167,7 +168,7 @@ describe('ScoreService', () => {
         hints: 0,
         errors: 0,
         timeElapsed: 60,
-        completed: false
+        completed: false,
       };
 
       const score = service.calculateScore(stats, GameMode.CLASSIC, 1, 1.0);
@@ -190,9 +191,9 @@ describe('ScoreService', () => {
           hints: 0,
           errors: 0,
           timeElapsed: 60,
-          completed: true
+          completed: true,
         },
-        date: Date.now()
+        date: Date.now(),
       };
 
       service.addScore(score);
@@ -209,7 +210,7 @@ describe('ScoreService', () => {
         difficulty: 1,
         score: 1000,
         stats: {} as GameStats,
-        date: Date.now()
+        date: Date.now(),
       };
 
       const score2: Score = {
@@ -219,7 +220,7 @@ describe('ScoreService', () => {
         difficulty: 1,
         score: 1500,
         stats: {} as GameStats,
-        date: Date.now()
+        date: Date.now(),
       };
 
       service.addScore(score1);
@@ -243,7 +244,7 @@ describe('ScoreService', () => {
           difficulty: 1,
           score: 500,
           stats: {} as GameStats,
-          date: Date.now()
+          date: Date.now(),
         },
         {
           id: 'test-score-5',
@@ -252,7 +253,7 @@ describe('ScoreService', () => {
           difficulty: 1,
           score: 1500,
           stats: {} as GameStats,
-          date: Date.now()
+          date: Date.now(),
         },
         {
           id: 'test-score-6',
@@ -261,11 +262,11 @@ describe('ScoreService', () => {
           difficulty: 1,
           score: 1000,
           stats: {} as GameStats,
-          date: Date.now()
-        }
+          date: Date.now(),
+        },
       ];
 
-      scores.forEach(score => service.addScore(score));
+      scores.forEach((score) => service.addScore(score));
 
       const highscores = service.getHighscoresForMode(GameMode.CLASSIC);
 
@@ -282,7 +283,7 @@ describe('ScoreService', () => {
         difficulty: 1,
         score: 1000,
         stats: {} as GameStats,
-        date: Date.now()
+        date: Date.now(),
       };
 
       service.addScore(score);
@@ -323,9 +324,9 @@ describe('ScoreService', () => {
           hints: 0,
           errors: 0,
           timeElapsed: 60,
-          completed: true
+          completed: true,
         },
-        date: Date.now()
+        date: Date.now(),
       };
 
       service.addScore(score);
@@ -345,7 +346,7 @@ describe('ScoreService', () => {
         mode: GameMode.CLASSIC,
         difficulty: 3,
         startTime: Date.now(),
-        endTime: Date.now() + 3600000
+        endTime: Date.now() + 3600000,
       };
 
       service.createTournament(tournament);
@@ -362,7 +363,7 @@ describe('ScoreService', () => {
         mode: GameMode.TIME_TRIAL,
         difficulty: 3,
         startTime: Date.now(),
-        endTime: Date.now() + 3600000
+        endTime: Date.now() + 3600000,
       };
 
       service.createTournament(tournament);
@@ -372,7 +373,7 @@ describe('ScoreService', () => {
       service.joinTournament(tournamentId);
 
       const updatedTournaments = await firstValueFrom(service.getTournaments());
-      const joined = updatedTournaments.find(t => t.id === tournamentId);
+      const joined = updatedTournaments.find((t) => t.id === tournamentId);
       expect(joined!.participants.length).toBe(1);
     });
   });

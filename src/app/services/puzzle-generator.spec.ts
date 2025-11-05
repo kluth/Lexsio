@@ -1,14 +1,15 @@
-import { describe, it, expect, beforeEach } from 'vitest';
 import { TestBed } from '@angular/core/testing';
-import { PuzzleGenerator } from './puzzle-generator';
+
 import { LixsoSymbol } from '../models/game.models';
+
+import { PuzzleGenerator } from './puzzle-generator';
 
 describe('PuzzleGenerator', () => {
   let service: PuzzleGenerator;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [PuzzleGenerator]
+      providers: [PuzzleGenerator],
     });
     service = TestBed.inject(PuzzleGenerator);
   });
@@ -36,7 +37,9 @@ describe('PuzzleGenerator', () => {
       expect(hardPuzzle.difficulty).toBe(6);
 
       // Easy puzzles should have more or equal hints (generator is non-deterministic)
-      expect(easyPuzzle.prefilledCells.length).toBeGreaterThanOrEqual(hardPuzzle.prefilledCells.length);
+      expect(easyPuzzle.prefilledCells.length).toBeGreaterThanOrEqual(
+        hardPuzzle.prefilledCells.length
+      );
     });
 
     it('should handle invalid grid sizes by defaulting to 9', () => {
@@ -47,7 +50,7 @@ describe('PuzzleGenerator', () => {
     it('should generate prefilled cells within grid bounds', () => {
       const puzzle = service.generatePuzzle(9, 3);
 
-      puzzle.prefilledCells.forEach(cell => {
+      puzzle.prefilledCells.forEach((cell) => {
         expect(cell.row).toBeGreaterThanOrEqual(0);
         expect(cell.row).toBeLessThan(9);
         expect(cell.col).toBeGreaterThanOrEqual(0);
@@ -64,7 +67,7 @@ describe('PuzzleGenerator', () => {
         expect(puzzle.solution.length).toBeGreaterThan(0);
 
         // Each tile should have unique ID
-        const ids = puzzle.solution.map(tile => tile.id);
+        const ids = puzzle.solution.map((tile) => tile.id);
         const uniqueIds = new Set(ids);
         expect(uniqueIds.size).toBe(ids.length);
       }
@@ -102,8 +105,8 @@ describe('PuzzleGenerator', () => {
 
       if (puzzle.prefilledCells.length > 1) {
         // Check that hints are not all in the same row/column
-        const rows = new Set(puzzle.prefilledCells.map(cell => cell.row));
-        const cols = new Set(puzzle.prefilledCells.map(cell => cell.col));
+        const rows = new Set(puzzle.prefilledCells.map((cell) => cell.row));
+        const cols = new Set(puzzle.prefilledCells.map((cell) => cell.col));
 
         expect(rows.size).toBeGreaterThan(1);
         expect(cols.size).toBeGreaterThan(1);
@@ -113,7 +116,7 @@ describe('PuzzleGenerator', () => {
     it('should use all four symbols in hints', () => {
       const puzzle = service.generatePuzzle(9, 1); // Level 1 has many hints
 
-      const symbols = new Set(puzzle.prefilledCells.map(cell => cell.symbol));
+      const symbols = new Set(puzzle.prefilledCells.map((cell) => cell.symbol));
 
       // With enough hints, we should see multiple different symbols
       expect(symbols.size).toBeGreaterThan(1);

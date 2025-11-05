@@ -62,20 +62,20 @@ export interface EngagementMetrics {
 }
 
 export interface RewardProbabilities {
-  standard: number;    // 60%
-  bonus: number;       // 30%
-  super: number;       // 8%
-  mega: number;        // 1.9%
-  legendary: number;   // 0.1%
+  standard: number; // 60%
+  bonus: number; // 30%
+  super: number; // 8%
+  mega: number; // 1.9%
+  legendary: number; // 0.1%
 }
 
 export interface DopamineLoopConfig {
-  maxRewardsPerHour: number;        // Limit: 12 (every 5 min)
-  cooldownBetweenLoops: number;     // Minimum: 30 seconds
-  requireRealProgress: boolean;     // No fake rewards
+  maxRewardsPerHour: number; // Limit: 12 (every 5 min)
+  cooldownBetweenLoops: number; // Minimum: 30 seconds
+  requireRealProgress: boolean; // No fake rewards
   transparentProbabilities: boolean; // Show odds
-  enableOptOut: boolean;            // Allow disabling
-  anticipationDuration: number;     // milliseconds (500-1000ms)
+  enableOptOut: boolean; // Allow disabling
+  anticipationDuration: number; // milliseconds (500-1000ms)
 }
 
 export interface DopamineLoopState {
@@ -103,16 +103,16 @@ export const RewardMultipliers: Record<RewardTier, number> = {
   bonus: 1.2,
   super: 2.0,
   mega: 5.0,
-  legendary: 10.0
+  legendary: 10.0,
 };
 
 // Dopamine impact percentages (relative to baseline)
 export const DopamineImpact: Record<RewardTier, number> = {
-  standard: 0,      // Baseline
-  bonus: 30,        // +30%
-  super: 80,        // +80%
-  mega: 200,        // +200%
-  legendary: 500    // +500%
+  standard: 0, // Baseline
+  bonus: 30, // +30%
+  super: 80, // +80%
+  mega: 200, // +200%
+  legendary: 500, // +500%
 };
 
 // Default ethical configuration
@@ -122,5 +122,5 @@ export const DEFAULT_DOPAMINE_CONFIG: DopamineLoopConfig = {
   requireRealProgress: true,
   transparentProbabilities: true,
   enableOptOut: true,
-  anticipationDuration: 750
+  anticipationDuration: 750,
 };

@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 test.describe('Lixso Game - Accessibility & Performance', () => {
   test('should have proper page structure with semantic HTML', async ({ page }) => {

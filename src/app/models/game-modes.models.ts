@@ -8,7 +8,7 @@ export enum GameMode {
   ZEN = 'ZEN',
   PERFECT = 'PERFECT',
   SPEED_RUN = 'SPEED_RUN',
-  MULTIPLAYER = 'MULTIPLAYER'
+  MULTIPLAYER = 'MULTIPLAYER',
 }
 
 export interface GameModeConfig {
@@ -35,7 +35,7 @@ export const GAME_MODE_CONFIGS: Record<GameMode, GameModeConfig> = {
     showTimer: true,
     showMoves: true,
     allowErrors: true,
-    scoreMultiplier: 1.0
+    scoreMultiplier: 1.0,
   },
   [GameMode.TIME_TRIAL]: {
     mode: GameMode.TIME_TRIAL,
@@ -47,7 +47,7 @@ export const GAME_MODE_CONFIGS: Record<GameMode, GameModeConfig> = {
     showTimer: true,
     showMoves: true,
     allowErrors: true,
-    scoreMultiplier: 1.5
+    scoreMultiplier: 1.5,
   },
   [GameMode.LIMITED_MOVES]: {
     mode: GameMode.LIMITED_MOVES,
@@ -59,7 +59,7 @@ export const GAME_MODE_CONFIGS: Record<GameMode, GameModeConfig> = {
     showTimer: false,
     showMoves: true,
     allowErrors: true,
-    scoreMultiplier: 1.8
+    scoreMultiplier: 1.8,
   },
   [GameMode.PROGRESSIVE]: {
     mode: GameMode.PROGRESSIVE,
@@ -70,7 +70,7 @@ export const GAME_MODE_CONFIGS: Record<GameMode, GameModeConfig> = {
     showTimer: true,
     showMoves: true,
     allowErrors: true,
-    scoreMultiplier: 2.0
+    scoreMultiplier: 2.0,
   },
   [GameMode.ZEN]: {
     mode: GameMode.ZEN,
@@ -81,7 +81,7 @@ export const GAME_MODE_CONFIGS: Record<GameMode, GameModeConfig> = {
     showTimer: false,
     showMoves: false,
     allowErrors: true,
-    scoreMultiplier: 0
+    scoreMultiplier: 0,
   },
   [GameMode.PERFECT]: {
     mode: GameMode.PERFECT,
@@ -92,7 +92,7 @@ export const GAME_MODE_CONFIGS: Record<GameMode, GameModeConfig> = {
     showTimer: true,
     showMoves: true,
     allowErrors: false,
-    scoreMultiplier: 3.0
+    scoreMultiplier: 3.0,
   },
   [GameMode.SPEED_RUN]: {
     mode: GameMode.SPEED_RUN,
@@ -104,7 +104,7 @@ export const GAME_MODE_CONFIGS: Record<GameMode, GameModeConfig> = {
     showTimer: true,
     showMoves: false,
     allowErrors: true,
-    scoreMultiplier: 2.5
+    scoreMultiplier: 2.5,
   },
   [GameMode.MULTIPLAYER]: {
     mode: GameMode.MULTIPLAYER,
@@ -115,8 +115,8 @@ export const GAME_MODE_CONFIGS: Record<GameMode, GameModeConfig> = {
     showTimer: true,
     showMoves: true,
     allowErrors: true,
-    scoreMultiplier: 2.0
-  }
+    scoreMultiplier: 2.0,
+  },
 };
 
 export interface GameStats {
@@ -170,50 +170,50 @@ export const ACHIEVEMENTS: Achievement[] = [
     id: 'first_win',
     name: 'First Victory',
     description: 'Complete your first puzzle',
-    icon: '🎊'
+    icon: '🎊',
   },
   {
     id: 'speed_demon',
     name: 'Speed Demon',
     description: 'Complete a puzzle in under 2 minutes',
-    icon: '⚡'
+    icon: '⚡',
   },
   {
     id: 'perfectionist',
     name: 'Perfectionist',
     description: 'Complete a puzzle without any errors',
-    icon: '✨'
+    icon: '✨',
   },
   {
     id: 'marathon_runner',
     name: 'Marathon Runner',
     description: 'Play for 60 minutes continuously',
-    icon: '🏃'
+    icon: '🏃',
   },
   {
     id: 'master_solver',
     name: 'Master Solver',
     description: 'Complete 50 puzzles',
-    icon: '🏆'
+    icon: '🏆',
   },
   {
     id: 'grandmaster',
     name: 'Grandmaster',
     description: 'Complete a Level 6 puzzle in Perfect mode',
-    icon: '👑'
+    icon: '👑',
   },
   {
     id: 'multiplayer_champion',
     name: 'Multiplayer Champion',
     description: 'Win 10 multiplayer games',
-    icon: '🥇'
+    icon: '🥇',
   },
   {
     id: 'streak_master',
     name: 'Streak Master',
     description: 'Win 5 games in a row',
-    icon: '🔥'
-  }
+    icon: '🔥',
+  },
 ];
 
 // Tournament models

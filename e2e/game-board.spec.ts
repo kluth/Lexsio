@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 test.describe('Lixso Game - Game Board Interactions', () => {
   test.beforeEach(async ({ page }) => {

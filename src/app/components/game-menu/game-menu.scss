@@ -5,7 +5,7 @@
   margin: 0 auto;
   padding: 1rem;
 
-  @media (min-width: 768px) {
+  @media (width >= 768px) {
     max-width: 900px;
     padding: 2rem;
   }
@@ -19,7 +19,6 @@
     font-size: 3rem;
     margin: 0;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     font-weight: bold;
@@ -28,7 +27,7 @@
   .tagline {
     font-size: 1.1rem;
     color: #7f8c8d;
-    margin: 0.5rem 0 0 0;
+    margin: 0.5rem 0 0;
   }
 }
 
@@ -41,7 +40,7 @@
   flex-direction: column;
   gap: 0.5rem;
 
-  @media (min-width: 768px) {
+  @media (width >= 768px) {
     flex-direction: row;
     align-items: center;
     justify-content: center;
@@ -64,7 +63,7 @@
       border-color: #3498db;
     }
 
-    @media (min-width: 768px) {
+    @media (width >= 768px) {
       flex: 1;
       max-width: 300px;
     }
@@ -78,7 +77,7 @@
   margin-bottom: 2rem;
 
   h3 {
-    margin: 0 0 1rem 0;
+    margin: 0 0 1rem;
     text-align: center;
     color: #2c3e50;
   }
@@ -88,7 +87,7 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 0.5rem;
 
-    @media (min-width: 768px) {
+    @media (width >= 768px) {
       grid-template-columns: repeat(6, 1fr);
     }
 
@@ -105,14 +104,14 @@
 
       &:hover {
         transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 4px 8px rgb(0 0 0 / 15%);
       }
 
       &.active {
         border-color: #3498db;
         background: #3498db;
         color: white;
-        box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+        box-shadow: 0 4px 12px rgb(52 152 219 / 40%);
       }
     }
   }
@@ -132,11 +131,11 @@
     grid-template-columns: 1fr;
     gap: 1rem;
 
-    @media (min-width: 600px) {
+    @media (width >= 600px) {
       grid-template-columns: repeat(2, 1fr);
     }
 
-    @media (min-width: 900px) {
+    @media (width >= 900px) {
       grid-template-columns: repeat(3, 1fr);
     }
   }
@@ -152,7 +151,7 @@
 
     &:hover {
       transform: translateY(-5px);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 8px 20px rgb(0 0 0 / 15%);
       border-color: #3498db;
     }
 
@@ -162,7 +161,7 @@
     }
 
     h3 {
-      margin: 0 0 0.5rem 0;
+      margin: 0 0 0.5rem;
       color: #2c3e50;
       font-size: 1.2rem;
     }
@@ -170,7 +169,7 @@
     p {
       color: #7f8c8d;
       font-size: 0.9rem;
-      margin: 0 0 1rem 0;
+      margin: 0 0 1rem;
       min-height: 3em;
     }
 
@@ -203,7 +202,7 @@
   gap: 1rem;
   margin-bottom: 2rem;
 
-  @media (min-width: 600px) {
+  @media (width >= 600px) {
     grid-template-columns: 1fr 1fr;
   }
 
@@ -220,7 +219,7 @@
 
     &:hover {
       transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 4px 8px rgb(0 0 0 / 15%);
     }
   }
 
@@ -242,7 +241,7 @@
   text-align: center;
 
   p {
-    margin: 0 0 0.5rem 0;
+    margin: 0 0 0.5rem;
     font-weight: bold;
     color: #2c3e50;
   }

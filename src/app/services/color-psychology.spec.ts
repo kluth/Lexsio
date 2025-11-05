@@ -2,8 +2,15 @@
 // RED phase: All tests should FAIL initially
 
 import { TestBed } from '@angular/core/testing';
+
+import {
+  ColorBlindType,
+  ColorTheme,
+  EmotionalTag,
+  ThemeId,
+} from '../models/color-psychology.models';
+
 import { ColorPsychologyService } from './color-psychology';
-import { ColorTheme, ThemeId, ColorBlindType, EmotionalTag } from '../models/color-psychology.models';
 
 describe('ColorPsychologyService - TDD', () => {
   let service: ColorPsychologyService;
@@ -34,10 +41,10 @@ describe('ColorPsychologyService - TDD', () => {
     it('should return all available themes', () => {
       const themes = service.getAllThemes();
       expect(themes.length).toBeGreaterThanOrEqual(7); // At least 7 themes
-      expect(themes.map(t => t.id)).toContain(ThemeId.FOCUS);
-      expect(themes.map(t => t.id)).toContain(ThemeId.ZEN);
-      expect(themes.map(t => t.id)).toContain(ThemeId.COMPETITIVE);
-      expect(themes.map(t => t.id)).toContain(ThemeId.HIGH_CONTRAST);
+      expect(themes.map((t) => t.id)).toContain(ThemeId.FOCUS);
+      expect(themes.map((t) => t.id)).toContain(ThemeId.ZEN);
+      expect(themes.map((t) => t.id)).toContain(ThemeId.COMPETITIVE);
+      expect(themes.map((t) => t.id)).toContain(ThemeId.HIGH_CONTRAST);
     });
 
     it('should get theme by ID', () => {
@@ -77,7 +84,7 @@ describe('ColorPsychologyService - TDD', () => {
         themeId: ThemeId.COMPETITIVE,
         colorBlindMode: 'none' as ColorBlindType,
         symbolsEnabled: false,
-        lastUpdated: new Date().toISOString()
+        lastUpdated: new Date().toISOString(),
       };
       localStorage.setItem('lixso_theme_preference', JSON.stringify(preference));
 
@@ -157,15 +164,15 @@ describe('ColorPsychologyService - TDD', () => {
           background: '#FFFFFF',
           backgroundSecondary: '#F0F0F0',
           text: '#DDDDDD', // Poor contrast with white background
-          textSecondary: '#EEEEEE'
+          textSecondary: '#EEEEEE',
         },
         accessibility: {
           contrastRatio: 1.5,
           colorBlindSafe: false,
           symbolsEnabled: false,
-          wcagLevel: 'fail'
+          wcagLevel: 'fail',
         },
-        emotionalTags: []
+        emotionalTags: [],
       };
 
       const report = service.validateAccessibility(mockBadTheme);
@@ -271,13 +278,13 @@ describe('ColorPsychologyService - TDD', () => {
 
     it('should recommend Zen theme for relaxation', () => {
       const recommendations = service.getThemeRecommendations({ emotionalState: 'stressed' });
-      const zenTheme = recommendations.find(t => t.id === ThemeId.ZEN);
+      const zenTheme = recommendations.find((t) => t.id === ThemeId.ZEN);
       expect(zenTheme).toBeTruthy();
     });
 
     it('should recommend Competitive theme for high-energy modes', () => {
       const recommendations = service.getThemeRecommendations({ emotionalState: 'energetic' });
-      const competitiveTheme = recommendations.find(t => t.id === ThemeId.COMPETITIVE);
+      const competitiveTheme = recommendations.find((t) => t.id === ThemeId.COMPETITIVE);
       expect(competitiveTheme).toBeTruthy();
     });
   });
@@ -294,7 +301,7 @@ describe('ColorPsychologyService - TDD', () => {
       // This would be tested in the component that renders gradients
       // For now, ensure themes have complementary colors for gradients
       const themes = service.getAllThemes();
-      themes.forEach(theme => {
+      themes.forEach((theme) => {
         expect(theme.colors.primary).toBeTruthy();
         expect(theme.colors.accent).toBeTruthy();
         expect(theme.colors.primary).not.toBe(theme.colors.accent);

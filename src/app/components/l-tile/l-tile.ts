@@ -6,6 +6,4 @@ import { Component } from '@angular/core';
   templateUrl: './l-tile.html',
   styleUrl: './l-tile.scss',
 })
-export class LTile {
-
-}
+export class LTile {}

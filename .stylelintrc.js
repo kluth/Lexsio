@@ -83,9 +83,7 @@ module.exports = {
     ],
     'declaration-no-important': null, // Sometimes needed for Angular overrides
 
-    // Formatting (handled by Prettier)
-    'indentation': null,
-    'string-quotes': null,
+    // Note: Formatting rules like indentation and string-quotes are handled by Prettier
   },
   ignoreFiles: [
     'dist/**/*',

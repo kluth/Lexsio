@@ -7,9 +7,9 @@
 
   <!-- Player Info -->
   <div class="player-info">
-    <label for="playerName">Player Name:</label>
+    <label for="player-name">Player Name:</label>
     <input
-      id="playerName"
+      id="player-name"
       type="text"
       [value]="playerName"
       (blur)="updatePlayerName($event)"
@@ -25,7 +25,8 @@
       <button
         *ngFor="let level of [1, 2, 3, 4, 5, 6]"
         [class.active]="selectedDifficulty === level"
-        (click)="selectedDifficulty = level">
+        (click)="selectedDifficulty = level"
+      >
         Level {{ level }}
       </button>
     </div>
@@ -35,10 +36,7 @@
   <div class="game-modes">
     <h2>Choose Your Game Mode</h2>
     <div class="modes-grid">
-      <div
-        *ngFor="let mode of gameModes"
-        class="mode-card"
-        (click)="selectMode(mode.mode)">
+      <div *ngFor="let mode of gameModes" class="mode-card" (click)="selectMode(mode.mode)" tabindex="0" role="button">
         <div class="mode-icon">{{ mode.icon }}</div>
         <h3>{{ mode.name }}</h3>
         <p>{{ mode.description }}</p>
@@ -53,12 +51,8 @@
 
   <!-- Additional Options -->
   <div class="menu-actions">
-    <button class="btn btn-secondary" (click)="onViewHighscores()">
-      🏆 Highscores
-    </button>
-    <button class="btn btn-secondary" (click)="onViewTournaments()">
-      🎪 Tournaments
-    </button>
+    <button class="btn btn-secondary" (click)="onViewHighscores()">🏆 Highscores</button>
+    <button class="btn btn-secondary" (click)="onViewTournaments()">🎪 Tournaments</button>
   </div>
 
   <!-- Game Info -->

@@ -3,22 +3,23 @@
 // Key principle: Dopamine released during ANTICIPATION, not reward
 
 import { Injectable, signal } from '@angular/core';
+
 import {
-  Reward,
-  RewardTier,
   AnticipationEffect,
   AnticipationLevel,
-  VisualEffect,
   AudioEffect,
-  Goal,
-  PlayerAction,
-  EngagementMetrics,
-  RewardProbabilities,
+  DEFAULT_DOPAMINE_CONFIG,
   DopamineLoopConfig,
   DopamineLoopState,
+  EngagementMetrics,
+  Goal,
+  PlayerAction,
   PlayerProgress,
+  Reward,
   RewardMultipliers,
-  DEFAULT_DOPAMINE_CONFIG
+  RewardProbabilities,
+  RewardTier,
+  VisualEffect,
 } from '../models/dopamine-loop.models';
 
 interface MicroFeedback {
@@ -28,13 +29,17 @@ interface MicroFeedback {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class DopamineLoopService {
   private state!: ReturnType<typeof signal<DopamineLoopState>>;
+
   private config: DopamineLoopConfig;
+
   private actionHistory: PlayerAction[] = [];
+
   private readonly STORAGE_KEY = 'lixso_dopamine_loop_state';
+
   private readonly HOUR_MS = 60 * 60 * 1000;
 
   constructor() {
@@ -50,7 +55,7 @@ export class DopamineLoopService {
       rewardsThisHour: 0,
       totalRewardsGiven: 0,
       isOptedOut: false,
-      config: this.config
+      config: this.config,
     });
   }
 
@@ -81,21 +86,21 @@ export class DopamineLoopService {
         type: 'glow',
         intensity,
         color: level === 'peak' ? '#FFD700' : '#7BA3D9',
-        duration: this.config.anticipationDuration
+        duration: this.config.anticipationDuration,
       },
       {
         type: 'pulse',
         intensity: intensity * 0.8,
-        duration: this.config.anticipationDuration
-      }
+        duration: this.config.anticipationDuration,
+      },
     ];
 
     const audioEffects: AudioEffect[] = [
       {
         type: 'ascending-tone',
         volume: intensity * 0.6,
-        duration: this.config.anticipationDuration
-      }
+        duration: this.config.anticipationDuration,
+      },
     ];
 
     this.updatePhase('anticipation');
@@ -105,7 +110,7 @@ export class DopamineLoopService {
       progressPercent,
       visualEffects,
       audioEffects,
-      duration: this.config.anticipationDuration
+      duration: this.config.anticipationDuration,
     };
   }
 
@@ -123,8 +128,8 @@ export class DopamineLoopService {
    */
   trackPlayerEngagement(): EngagementMetrics {
     const now = new Date();
-    const recentActions = this.actionHistory.filter(a =>
-      now.getTime() - a.timestamp.getTime() < 60000 // Last minute
+    const recentActions = this.actionHistory.filter(
+      (a) => now.getTime() - a.timestamp.getTime() < 60000 // Last minute
     );
 
     const actionsPerMinute = recentActions.length;
@@ -140,7 +145,7 @@ export class DopamineLoopService {
       actionsPerMinute,
       focusScore,
       flowStateDetected,
-      lastActionTimestamp: this.actionHistory[this.actionHistory.length - 1]?.timestamp || now
+      lastActionTimestamp: this.actionHistory[this.actionHistory.length - 1]?.timestamp || now,
     };
   }
 
@@ -160,35 +165,37 @@ export class DopamineLoopService {
       'tile-placed': {
         message: 'Good move!',
         type: 'positive',
-        duration: 500
+        duration: 500,
       },
       'tile-removed': {
         message: 'Tile removed',
         type: 'neutral',
-        duration: 300
+        duration: 300,
       },
       'puzzle-completed': {
         message: 'Puzzle complete! 🎉',
         type: 'positive',
-        duration: 2000
+        duration: 2000,
       },
       'hint-used': {
         message: 'Hint used',
         type: 'neutral',
-        duration: 1000
+        duration: 1000,
       },
       'error-made': {
         message: 'Try again',
         type: 'negative',
-        duration: 800
-      }
+        duration: 800,
+      },
     };
 
-    return feedbackMap[action.type] || {
-      message: 'Action recorded',
-      type: 'neutral',
-      duration: 500
-    };
+    return (
+      feedbackMap[action.type] || {
+        message: 'Action recorded',
+        type: 'neutral',
+        duration: 500,
+      }
+    );
   }
 
   /**
@@ -203,13 +210,13 @@ export class DopamineLoopService {
     if (random < 0.001) {
       tier = 'legendary'; // 0.1%
     } else if (random < 0.02) {
-      tier = 'mega';      // 1.9%
-    } else if (random < 0.10) {
-      tier = 'super';     // 8%
-    } else if (random < 0.40) {
-      tier = 'bonus';     // 30%
+      tier = 'mega'; // 1.9%
+    } else if (random < 0.1) {
+      tier = 'super'; // 8%
+    } else if (random < 0.4) {
+      tier = 'bonus'; // 30%
     } else {
-      tier = 'standard';  // 60%
+      tier = 'standard'; // 60%
     }
 
     const multiplier = RewardMultipliers[tier];
@@ -220,7 +227,7 @@ export class DopamineLoopService {
       bonus: 'Bonus reward! 🌟',
       super: 'Super reward! ⭐⭐',
       mega: 'MEGA REWARD! 💎',
-      legendary: 'LEGENDARY REWARD!!! 👑'
+      legendary: 'LEGENDARY REWARD!!! 👑',
     };
 
     const displayDurations: Record<RewardTier, number> = {
@@ -228,7 +235,7 @@ export class DopamineLoopService {
       bonus: 1500,
       super: 2000,
       mega: 3000,
-      legendary: 5000
+      legendary: 5000,
     };
 
     return {
@@ -238,7 +245,7 @@ export class DopamineLoopService {
       multiplier,
       description: descriptions[tier],
       granted: new Date(),
-      displayDuration: displayDurations[tier]
+      displayDuration: displayDurations[tier],
     };
   }
 
@@ -259,12 +266,12 @@ export class DopamineLoopService {
     }
 
     // Update state
-    this.state.update(s => ({
+    this.state.update((s) => ({
       ...s,
       currentPhase: 'reward',
       lastRewardTime: reward.granted,
       rewardsThisHour: s.rewardsThisHour + 1,
-      totalRewardsGiven: s.totalRewardsGiven + 1
+      totalRewardsGiven: s.totalRewardsGiven + 1,
     }));
 
     this.saveState();
@@ -299,7 +306,7 @@ export class DopamineLoopService {
         const timeSinceLastReward = now.getTime() - currentState.lastRewardTime.getTime();
         if (timeSinceLastReward >= this.HOUR_MS) {
           // Reset hourly count
-          this.state.update(s => ({ ...s, rewardsThisHour: 0 }));
+          this.state.update((s) => ({ ...s, rewardsThisHour: 0 }));
           return true;
         }
       }
@@ -322,11 +329,11 @@ export class DopamineLoopService {
    */
   getTransparentOdds(): RewardProbabilities {
     return {
-      standard: 0.60,
-      bonus: 0.30,
+      standard: 0.6,
+      bonus: 0.3,
       super: 0.08,
       mega: 0.019,
-      legendary: 0.001
+      legendary: 0.001,
     };
   }
 
@@ -334,7 +341,7 @@ export class DopamineLoopService {
    * Opt out of dopamine loops
    */
   optOut(): void {
-    this.state.update(s => ({ ...s, isOptedOut: true }));
+    this.state.update((s) => ({ ...s, isOptedOut: true }));
     this.saveState();
   }
 
@@ -342,7 +349,7 @@ export class DopamineLoopService {
    * Opt back in
    */
   optIn(): void {
-    this.state.update(s => ({ ...s, isOptedOut: false }));
+    this.state.update((s) => ({ ...s, isOptedOut: false }));
     this.saveState();
   }
 
@@ -356,18 +363,18 @@ export class DopamineLoopService {
       {
         description: `Complete ${5 + difficulty} more puzzles`,
         targetValue: 5 + difficulty,
-        category: 'puzzle' as const
+        category: 'puzzle' as const,
       },
       {
-        description: `Reach ${progress.totalScore + (1000 * (difficulty + 1))} points`,
-        targetValue: progress.totalScore + (1000 * (difficulty + 1)),
-        category: 'score' as const
+        description: `Reach ${progress.totalScore + 1000 * (difficulty + 1)} points`,
+        targetValue: progress.totalScore + 1000 * (difficulty + 1),
+        category: 'score' as const,
       },
       {
         description: `Maintain a ${3 + difficulty} day streak`,
         targetValue: 3 + difficulty,
-        category: 'streak' as const
-      }
+        category: 'streak' as const,
+      },
     ];
 
     const template = goalTemplates[Math.floor(Math.random() * goalTemplates.length)];
@@ -380,7 +387,7 @@ export class DopamineLoopService {
       progressPercent: 0,
       category: template.category,
       difficulty,
-      estimatedTime: template.targetValue * 180 // 3 minutes per unit
+      estimatedTime: template.targetValue * 180, // 3 minutes per unit
     };
   }
 
@@ -402,10 +409,10 @@ export class DopamineLoopService {
    * Update current phase
    */
   private updatePhase(phase: DopamineLoopState['currentPhase']): void {
-    this.state.update(s => ({
+    this.state.update((s) => ({
       ...s,
       currentPhase: phase,
-      isActive: phase !== 'idle'
+      isActive: phase !== 'idle',
     }));
   }
 
@@ -429,7 +436,7 @@ export class DopamineLoopService {
   private saveState(): void {
     const stateToSave = {
       ...this.state(),
-      lastRewardTime: this.state().lastRewardTime?.toISOString()
+      lastRewardTime: this.state().lastRewardTime?.toISOString(),
     };
     localStorage.setItem(this.STORAGE_KEY, JSON.stringify(stateToSave));
   }
@@ -442,10 +449,10 @@ export class DopamineLoopService {
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
-        this.state.update(s => ({
+        this.state.update((s) => ({
           ...s,
           ...parsed,
-          lastRewardTime: parsed.lastRewardTime ? new Date(parsed.lastRewardTime) : undefined
+          lastRewardTime: parsed.lastRewardTime ? new Date(parsed.lastRewardTime) : undefined,
         }));
       } catch (e) {
         console.error('Failed to load dopamine loop state', e);
