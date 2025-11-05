@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import * as Tone from 'tone';
-import { GridCell, LTile, CellSymbol } from '../models/game.models';
+import { GridCell, LTile, LixsoSymbol } from '../models/game.models';
 
 /**
  * Generative Music System
@@ -23,7 +23,7 @@ export interface MusicConfig {
 }
 
 export interface TileNote {
-  symbol: CellSymbol;
+  symbol: LixsoSymbol;
   note: string;
   duration: string;
   velocity: number;
@@ -59,11 +59,11 @@ export class MusicGeneratorService {
   private synth: Tone.PolySynth | null = null;
   private initialized = false;
 
-  private tileNoteMapping: Map<CellSymbol, number> = new Map([
-    ['I', 0], // Root
-    ['X', 2], // Third
-    ['S', 4], // Fifth
-    ['O', 6]  // Seventh
+  private tileNoteMapping: Map<LixsoSymbol, number> = new Map([
+    [LixsoSymbol.I, 0], // Root
+    [LixsoSymbol.X, 2], // Third
+    [LixsoSymbol.S, 4], // Fifth
+    [LixsoSymbol.O, 6]  // Seventh
   ]);
 
   constructor() {
@@ -136,12 +136,13 @@ export class MusicGeneratorService {
     const scale = SCALES[this.config().scale];
     const noteIndex = this.tileNoteMapping.get(tile.symbol) || 0;
 
-    // Add variation based on orientation
-    const orientationOffset = tile.orientation;
+    // Add variation based on orientation (convert enum to number)
+    const orientationValues = ['UP_RIGHT', 'DOWN_RIGHT', 'DOWN_LEFT', 'UP_LEFT'];
+    const orientationOffset = orientationValues.indexOf(tile.orientation);
     const finalIndex = (noteIndex + orientationOffset) % scale.length;
 
     // Add variation based on position
-    const positionVariation = (tile.row + tile.col) % 3;
+    const positionVariation = (tile.anchorRow + tile.anchorCol) % 3;
     const octaveShift = positionVariation === 2 ? 12 : 0; // Shift up an octave sometimes
 
     return {
@@ -175,7 +176,7 @@ export class MusicGeneratorService {
             symbol: cell.symbol,
             note: scale[noteIndex],
             duration: '16n', // Sixteenth note for faster playback
-            velocity: cell.isPrefilled ? 0.5 : 0.8 // Softer for prefilled
+            velocity: cell.prefilled ? 0.5 : 0.8 // Softer for prefilled
           });
         }
       }

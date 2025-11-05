@@ -8,7 +8,7 @@
  * Uses Chrome's window.ai API for privacy-preserving, offline-capable AI
  */
 
-import { LTile, GridCell, CellSymbol } from './game.models';
+import { LTile, GridCell, LixsoSymbol, LTileOrientation } from './game.models';
 
 export type HintLevel = 'beginner' | 'intermediate' | 'advanced' | 'expert';
 export type HintType = 'next-move' | 'strategy' | 'pattern' | 'mistake' | 'encouragement';
@@ -81,7 +81,7 @@ export interface BoardAnalysis {
  * Color cluster detection
  */
 export interface ColorCluster {
-  symbol: CellSymbol;
+  symbol: LixsoSymbol;
   cells: { row: number; col: number }[];
   size: number;
   isProblematic: boolean; // true if creating adjacency issues
@@ -103,7 +103,7 @@ export interface OpenSpace {
  */
 export interface Constraint {
   type: 'adjacency' | 'boundary' | 'prefill';
-  affected Cells: { row: number; col: number }[];
+  affectedCells: { row: number; col: number }[];
   description: string;
 }
 
@@ -136,18 +136,18 @@ export interface ChromeAIHintResponse {
   hint: string;
   reasoning: string;
   suggestedMove?: {
-    symbol: CellSymbol;
-    orientation: number;
-    row: number;
-    col: number;
+    symbol: LixsoSymbol;
+    orientation: LTileOrientation;
+    anchorRow: number;
+    anchorCol: number;
   };
   confidence: number;
   alternatives?: Array<{
     move: {
-      symbol: CellSymbol;
-      orientation: number;
-      row: number;
-      col: number;
+      symbol: LixsoSymbol;
+      orientation: LTileOrientation;
+      anchorRow: number;
+      anchorCol: number;
     };
     quality: number;
     reason: string;
