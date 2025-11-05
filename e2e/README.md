@@ -113,8 +113,8 @@ This will:
 E2E tests run automatically in CI/CD pipelines:
 - On every push (test.yml workflow)
 - Before deployment (ci-cd.yml workflow)
-- **CI runs only Chromium tests** for faster execution
-- Locally you can test all browsers (Firefox, WebKit, Mobile)
+- **All browsers tested in CI**: Chromium, Firefox, WebKit, Mobile Chrome, Mobile Safari
+- Comprehensive cross-browser coverage ensuring compatibility
 
 Reports and screenshots from failed tests are uploaded as artifacts.
 
