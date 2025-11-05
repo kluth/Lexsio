@@ -1,19 +1,18 @@
 import { Injectable, signal } from '@angular/core';
+
 import {
   AIHint,
-  HintLevel,
-  HintType,
-  BoardAnalysis,
   AIHintConfig,
-  HintStatistics,
+  BoardAnalysis,
   ChromeAICapabilities,
-  ChromeAIHintRequest,
   ChromeAIHintResponse,
-  HeuristicHint,
+  HintCacheEntry,
+  HintLevel,
+  HintStatistics,
+  HintType,
   PlayerContext,
-  HintCacheEntry
 } from '../models/ai-hint.models';
-import { GridCell, LTile, LixsoSymbol, LTileOrientation } from '../models/game.models';
+import { GridCell, LixsoSymbol, LTile, LTileOrientation } from '../models/game.models';
 
 /**
  * AI-Powered Hint Service
@@ -31,11 +30,11 @@ declare global {
         capabilities(): Promise<AILanguageModelCapabilities>;
         create(options?: AILanguageModelCreateOptions): Promise<AILanguageModel>;
       };
-      // Future APIs
-      summarizer?: any;
-      translator?: any;
-      writer?: any;
-      rewriter?: any;
+      // Future APIs (not yet implemented)
+      summarizer?: unknown;
+      translator?: unknown;
+      writer?: unknown;
+      rewriter?: unknown;
     };
   }
 
@@ -73,21 +72,23 @@ const DEFAULT_CONFIG: AIHintConfig = {
   cacheTimeout: 300000, // 5 minutes
   enableHeuristics: true,
   fallbackOnError: true,
-  timeout: 5000
+  timeout: 5000,
 };
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AIHintService {
   private config = signal<AIHintConfig>(DEFAULT_CONFIG);
+
   private capabilities = signal<ChromeAICapabilities>({
     available: false,
     promptAPI: false,
     translationAPI: false,
     summarizationAPI: false,
-    languageDetectionAPI: false
+    languageDetectionAPI: false,
   });
+
   private statistics = signal<HintStatistics>({
     totalHints: 0,
     chromeAIHints: 0,
@@ -95,13 +96,15 @@ export class AIHintService {
     averageConfidence: 0,
     cacheHitRate: 0,
     averageResponseTime: 0,
-    chromeAIAvailability: 0
+    chromeAIAvailability: 0,
   });
 
   private cache = new Map<string, HintCacheEntry>();
+
   private session: AILanguageModel | null = null;
 
   constructor() {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     this.detectChromeAI();
   }
 
@@ -113,27 +116,26 @@ export class AIHintService {
       if ('ai' in window && window.ai?.languageModel) {
         const caps = await window.ai.languageModel.capabilities();
 
-        this.capabilities.update(current => ({
+        this.capabilities.update((current) => ({
           ...current,
           available: caps.available !== 'no',
-          promptAPI: caps.available !== 'no'
+          promptAPI: caps.available !== 'no',
         }));
 
-        console.log('[AI Hint] Chrome AI Status:', caps.available);
-
+        // Chrome AI Status check
         if (caps.available === 'after-download') {
-          console.log('[AI Hint] Gemini Nano requires download. Will fallback to heuristics.');
+          // Gemini Nano requires download. Will fallback to heuristics.
         } else if (caps.available === 'readily') {
-          console.log('[AI Hint] Gemini Nano is ready! 🚀');
+          // Gemini Nano is ready!
         }
       } else {
         console.warn('[AI Hint] Chrome AI not available. Using heuristics only.');
         console.warn('[AI Hint] Note: Chrome AI requires Chrome 138+ and specific flags enabled.');
-        this.capabilities.update(caps => ({ ...caps, available: false }));
+        this.capabilities.update((caps) => ({ ...caps, available: false }));
       }
     } catch (error) {
       console.error('[AI Hint] Error detecting Chrome AI:', error);
-      this.capabilities.update(caps => ({ ...caps, available: false }));
+      this.capabilities.update((caps) => ({ ...caps, available: false }));
     }
   }
 
@@ -159,12 +161,10 @@ Always respond in a friendly, educational tone.`;
       this.session = await window.ai.languageModel.create({
         systemPrompt,
         temperature: this.config().temperature,
-        topK: caps.defaultTopK || 3
+        topK: caps.defaultTopK || 3,
       });
 
-      console.log('[AI Hint] Gemini Nano session initialized successfully! 🎉');
-      console.log(`[AI Hint] Max tokens: ${this.session.maxTokens}, Tokens left: ${this.session.tokensLeft}`);
-
+      // Gemini Nano session initialized successfully
       return this.session;
     } catch (error) {
       console.error('[AI Hint] Error initializing Gemini Nano session:', error);
@@ -188,7 +188,6 @@ Always respond in a friendly, educational tone.`;
       const cacheKey = this.getCacheKey(grid, level, type);
       const cached = this.getFromCache(cacheKey);
       if (cached) {
-        console.log('[AI Hint] Cache hit!');
         return cached;
       }
 
@@ -211,11 +210,10 @@ Always respond in a friendly, educational tone.`;
       }
 
       // Fallback to heuristics
-      const hint = await this.generateHeuristicHint(grid, analysis, level, type);
+      const hint = this.generateHeuristicHint(grid, analysis, level, type);
       this.updateStatistics(startTime, 'heuristic');
       this.addToCache(cacheKey, hint);
       return hint;
-
     } catch (error) {
       console.error('[AI Hint] Error generating hint:', error);
       throw new Error('Failed to generate hint');
@@ -257,18 +255,22 @@ Always respond in a friendly, educational tone.`;
         level,
         title: parsed.hint,
         explanation: parsed.reasoning,
-        suggestedTile: parsed.suggestedMove ? this.createTileFromMove(parsed.suggestedMove) : undefined,
-        suggestedPosition: parsed.suggestedMove ? {
-          row: parsed.suggestedMove.anchorRow,
-          col: parsed.suggestedMove.anchorCol
-        } : undefined,
+        suggestedTile: parsed.suggestedMove
+          ? this.createTileFromMove(parsed.suggestedMove)
+          : undefined,
+        suggestedPosition: parsed.suggestedMove
+          ? {
+              row: parsed.suggestedMove.anchorRow,
+              col: parsed.suggestedMove.anchorCol,
+            }
+          : undefined,
         confidence: parsed.confidence,
         reasoning: parsed.reasoning,
         moveQuality: this.calculateMoveQuality(parsed),
         difficultyReduction: 25,
         source: 'chrome-ai',
         generatedAt: new Date(),
-        processingTime: 0
+        processingTime: 0,
       };
 
       return hint;
@@ -286,7 +288,7 @@ Always respond in a friendly, educational tone.`;
     analysis: BoardAnalysis,
     level: HintLevel,
     type: HintType,
-    playerContext?: Partial<PlayerContext>
+    _playerContext?: Partial<PlayerContext>
   ): string {
     const boardState = this.serializeBoard(grid);
     const levelInstructions = this.getLevelInstructions(level);
@@ -334,7 +336,7 @@ Respond in this JSON format:
       beginner: 'Give very detailed, step-by-step explanations. Focus on teaching the basics.',
       intermediate: 'Provide clear explanations with some strategy insights.',
       advanced: 'Give strategic hints that encourage critical thinking.',
-      expert: 'Provide subtle hints that guide without giving away the solution.'
+      expert: 'Provide subtle hints that guide without giving away the solution.',
     };
     return instructions[level];
   }
@@ -363,12 +365,12 @@ Respond in this JSON format:
       // Try to extract JSON from response
       const jsonMatch = response.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
-        const parsed = JSON.parse(jsonMatch[0]);
+        const parsed = JSON.parse(jsonMatch[0]) as Partial<ChromeAIHintResponse>;
         return {
-          hint: parsed.hint || 'Consider your next move carefully',
-          reasoning: parsed.reasoning || 'Analyze the board patterns',
+          hint: parsed.hint ?? 'Consider your next move carefully',
+          reasoning: parsed.reasoning ?? 'Analyze the board patterns',
           suggestedMove: parsed.suggestedMove,
-          confidence: parsed.confidence || 0.7
+          confidence: parsed.confidence ?? 0.7,
         };
       }
 
@@ -376,14 +378,14 @@ Respond in this JSON format:
       return {
         hint: response.substring(0, 100),
         reasoning: response,
-        confidence: 0.5
+        confidence: 0.5,
       };
     } catch (error) {
       console.warn('[AI Hint] Failed to parse AI response, using fallback');
       return {
         hint: 'Look for empty spaces where tiles can fit',
         reasoning: response,
-        confidence: 0.5
+        confidence: 0.5,
       };
     }
   }
@@ -391,12 +393,12 @@ Respond in this JSON format:
   /**
    * Generate heuristic hint (fallback)
    */
-  private async generateHeuristicHint(
+  private generateHeuristicHint(
     grid: GridCell[][],
     analysis: BoardAnalysis,
     level: HintLevel,
     type: HintType
-  ): Promise<AIHint> {
+  ): AIHint {
     // Simple heuristic: find first valid tile placement
     const suggestion = this.findBestMove(grid, analysis);
 
@@ -413,7 +415,7 @@ Respond in this JSON format:
       difficultyReduction: 20,
       source: 'heuristic',
       generatedAt: new Date(),
-      processingTime: 10
+      processingTime: 10,
     };
 
     return hint;
@@ -422,7 +424,10 @@ Respond in this JSON format:
   /**
    * Find best move using heuristics
    */
-  private findBestMove(grid: GridCell[][], analysis: BoardAnalysis): {
+  private findBestMove(
+    grid: GridCell[][],
+    _analysis: BoardAnalysis
+  ): {
     tile: LTile;
     position: { row: number; col: number };
   } {
@@ -432,7 +437,7 @@ Respond in this JSON format:
       LTileOrientation.UP_RIGHT,
       LTileOrientation.DOWN_RIGHT,
       LTileOrientation.DOWN_LEFT,
-      LTileOrientation.UP_LEFT
+      LTileOrientation.UP_LEFT,
     ];
 
     for (let row = 0; row < grid.length - 2; row++) {
@@ -445,9 +450,10 @@ Respond in this JSON format:
               orientation,
               anchorRow: row,
               anchorCol: col,
-              placed: false
+              placed: false,
             };
 
+            // eslint-disable-next-line max-depth
             if (this.isValidPlacement(grid, tile)) {
               return { tile, position: { row, col } };
             }
@@ -464,16 +470,16 @@ Respond in this JSON format:
         orientation: LTileOrientation.UP_RIGHT,
         anchorRow: 0,
         anchorCol: 0,
-        placed: false
+        placed: false,
       },
-      position: { row: 0, col: 0 }
+      position: { row: 0, col: 0 },
     };
   }
 
   /**
    * Check if tile placement is valid
    */
-  private isValidPlacement(grid: GridCell[][], tile: LTile): boolean {
+  private isValidPlacement(_grid: GridCell[][], _tile: LTile): boolean {
     // This is a simplified check - you should integrate with the game service
     // for full validation logic
     return true; // Placeholder
@@ -514,7 +520,7 @@ Respond in this JSON format:
       solutionCount: 1,
       errorCount: 0,
       hintsUsed: 0,
-      timeElapsed: 0
+      timeElapsed: 0,
     };
   }
 
@@ -551,7 +557,7 @@ Respond in this JSON format:
       boardHash: key,
       hint,
       cachedAt: new Date(),
-      hits: 0
+      hits: 0,
     });
 
     // Limit cache size
@@ -566,12 +572,13 @@ Respond in this JSON format:
   private updateStatistics(startTime: number, source: 'chrome-ai' | 'heuristic'): void {
     const responseTime = Date.now() - startTime;
 
-    this.statistics.update(stats => ({
+    this.statistics.update((stats) => ({
       ...stats,
       totalHints: stats.totalHints + 1,
       chromeAIHints: source === 'chrome-ai' ? stats.chromeAIHints + 1 : stats.chromeAIHints,
       heuristicHints: source === 'heuristic' ? stats.heuristicHints + 1 : stats.heuristicHints,
-      averageResponseTime: (stats.averageResponseTime * stats.totalHints + responseTime) / (stats.totalHints + 1)
+      averageResponseTime:
+        (stats.averageResponseTime * stats.totalHints + responseTime) / (stats.totalHints + 1),
     }));
   }
 
@@ -579,22 +586,33 @@ Respond in this JSON format:
     return Math.round(response.confidence * 100);
   }
 
-  private createTileFromMove(move: { symbol: LixsoSymbol; orientation: LTileOrientation; anchorRow: number; anchorCol: number }): LTile {
+  private createTileFromMove(move: {
+    symbol: LixsoSymbol;
+    orientation: LTileOrientation;
+    anchorRow: number;
+    anchorCol: number;
+  }): LTile {
     return {
       id: `tile-${Date.now()}`,
       symbol: move.symbol,
       orientation: move.orientation,
       anchorRow: move.anchorRow,
       anchorCol: move.anchorCol,
-      placed: false
+      placed: false,
     };
   }
 
-  private getHeuristicTitle(suggestion: { tile: LTile; position: { row: number; col: number } }, level: HintLevel): string {
+  private getHeuristicTitle(
+    suggestion: { tile: LTile; position: { row: number; col: number } },
+    _level: HintLevel
+  ): string {
     return `Try placing a ${suggestion.tile.symbol} tile`;
   }
 
-  private getHeuristicExplanation(suggestion: { tile: LTile; position: { row: number; col: number } }, level: HintLevel): string {
+  private getHeuristicExplanation(
+    suggestion: { tile: LTile; position: { row: number; col: number } },
+    _level: HintLevel
+  ): string {
     return `Consider placing a ${suggestion.tile.symbol} tile at row ${suggestion.position.row + 1}, column ${suggestion.position.col + 1}. This move opens up future possibilities.`;
   }
 
@@ -610,14 +628,14 @@ Respond in this JSON format:
   }
 
   public updateConfig(partial: Partial<AIHintConfig>): void {
-    this.config.update(current => ({ ...current, ...partial }));
+    this.config.update((current) => ({ ...current, ...partial }));
   }
 
   public clearCache(): void {
     this.cache.clear();
   }
 
-  public async destroy(): Promise<void> {
+  public destroy(): void {
     if (this.session) {
       this.session.destroy();
       this.session = null;

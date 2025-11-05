@@ -8,7 +8,7 @@
  * Uses Chrome's window.ai API for privacy-preserving, offline-capable AI
  */
 
-import { LTile, GridCell, LixsoSymbol, LTileOrientation } from './game.models';
+import { GridCell, LixsoSymbol, LTile, LTileOrientation } from './game.models';
 
 export type HintLevel = 'beginner' | 'intermediate' | 'advanced' | 'expert';
 export type HintType = 'next-move' | 'strategy' | 'pattern' | 'mistake' | 'encouragement';

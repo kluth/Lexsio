@@ -16,15 +16,21 @@
 
   <!-- Game Grid -->
   <div class="grid-container" (mouseleave)="onMouseLeaveGrid()">
-    <div class="grid"
-         [style.gridTemplateColumns]="'repeat(' + gameState.gridSize + ', 1fr)'"
-         [style.gridTemplateRows]="'repeat(' + gameState.gridSize + ', 1fr)'">
+    <div
+      class="grid"
+      [style.gridTemplateColumns]="'repeat(' + gameState.gridSize + ', 1fr)'"
+      [style.gridTemplateRows]="'repeat(' + gameState.gridSize + ', 1fr)'"
+    >
       <div *ngFor="let row of gameState.grid" class="grid-row">
-        <div *ngFor="let cell of row"
-             [class]="getCellClass(cell)"
-             [style.backgroundColor]="getSymbolColor(cell.symbol)"
-             (click)="onCellClick(cell)"
-             (mouseenter)="onCellHover(cell)">
+        <div
+          *ngFor="let cell of row"
+          [class]="getCellClass(cell)"
+          [style.backgroundColor]="getSymbolColor(cell.symbol)"
+          (click)="onCellClick(cell)"
+          (mouseenter)="onCellHover(cell)"
+          tabindex="0"
+          role="button"
+        >
           <span class="cell-symbol" *ngIf="cell.symbol">{{ cell.symbol }}</span>
         </div>
       </div>
@@ -41,7 +47,8 @@
           *ngFor="let symbol of [LixsoSymbol.I, LixsoSymbol.X, LixsoSymbol.S, LixsoSymbol.O]"
           [class.active]="selectedSymbol === symbol"
           [style.backgroundColor]="SymbolColorMap[symbol]"
-          (click)="selectSymbol(symbol)">
+          (click)="selectSymbol(symbol)"
+        >
           {{ symbol }}
         </button>
       </div>
@@ -52,15 +59,21 @@
       <h3>Tile Orientation</h3>
       <div class="orientation-selector">
         <button
-          *ngFor="let orientation of [LTileOrientation.UP_RIGHT, LTileOrientation.DOWN_RIGHT, LTileOrientation.DOWN_LEFT, LTileOrientation.UP_LEFT]"
+          *ngFor="
+            let orientation of [
+              LTileOrientation.UP_RIGHT,
+              LTileOrientation.DOWN_RIGHT,
+              LTileOrientation.DOWN_LEFT,
+              LTileOrientation.UP_LEFT,
+            ]
+          "
           [class.active]="selectedOrientation === orientation"
-          (click)="selectOrientation(orientation)">
+          (click)="selectOrientation(orientation)"
+        >
           {{ getOrientationDisplay(orientation) }}
         </button>
       </div>
-      <button class="rotate-btn" (click)="rotateOrientation()">
-        🔄 Rotate
-      </button>
+      <button class="rotate-btn" (click)="rotateOrientation()">🔄 Rotate</button>
     </div>
 
     <!-- Game Actions -->
@@ -76,7 +89,8 @@
         <button
           *ngFor="let level of [1, 2, 3, 4, 5, 6]"
           [class.active]="currentDifficulty === level"
-          (click)="startNewGame(level)">
+          (click)="startNewGame(level)"
+        >
           Level {{ level }}
         </button>
       </div>

@@ -3,23 +3,24 @@
 // Based on: 85% of first impressions are color-based (research 2025)
 
 import { Injectable, signal } from '@angular/core';
+
 import {
-  ColorTheme,
-  ThemeId,
-  ColorBlindType,
   AccessibilityReport,
+  ColorBlindType,
+  ColorTheme,
   ContrastIssue,
+  ThemeId,
   ThemePreference,
-  EmotionalTag,
-  ColorPalette
 } from '../models/color-psychology.models';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ColorPsychologyService {
   private currentTheme!: ReturnType<typeof signal<ColorTheme>>;
+
   private themes: ColorTheme[] = [];
+
   private readonly STORAGE_KEY = 'lixso_theme_preference';
 
   constructor() {
@@ -31,6 +32,7 @@ export class ColorPsychologyService {
   /**
    * Initialize all predefined themes based on color psychology research
    */
+  // eslint-disable-next-line max-lines-per-function
   private initializeThemes(): void {
     this.themes = [
       // Focus Mode - Warm, inviting hues (2025 trend)
@@ -38,27 +40,28 @@ export class ColorPsychologyService {
         id: ThemeId.FOCUS,
         name: 'Focus Mode',
         description: 'Warm, inviting colors that promote calm concentration and flow state',
-        psychologicalEffect: 'Reduces stress, promotes flow state, enhances concentration through warm, natural tones',
+        psychologicalEffect:
+          'Reduces stress, promotes flow state, enhances concentration through warm, natural tones',
         colors: {
-          primary: '#D4C4A8',      // Warm beige - inviting, calm
-          accent: '#E67359',       // Coral - gentle energy
-          success: '#6B9A5F',      // Deeper sage green - natural
-          error: '#C44D2F',        // Deeper terracotta - warm warning
-          hint: '#5A8BC4',         // Deeper sky blue - trustworthy
-          warning: '#D4925F',      // Deeper amber
-          background: '#FFFFFF',   // Pure white for best contrast
+          primary: '#D4C4A8', // Warm beige - inviting, calm
+          accent: '#E67359', // Coral - gentle energy
+          success: '#6B9A5F', // Deeper sage green - natural
+          error: '#C44D2F', // Deeper terracotta - warm warning
+          hint: '#5A8BC4', // Deeper sky blue - trustworthy
+          warning: '#D4925F', // Deeper amber
+          background: '#FFFFFF', // Pure white for best contrast
           backgroundSecondary: '#F5F5F5',
-          text: '#1A1410',         // Darker warm black
-          textSecondary: '#4A4238'
+          text: '#1A1410', // Darker warm black
+          textSecondary: '#4A4238',
         },
         accessibility: {
           contrastRatio: 14.8,
           colorBlindSafe: true,
           symbolsEnabled: false,
-          wcagLevel: 'AAA'
+          wcagLevel: 'AAA',
         },
         emotionalTags: ['calm', 'focused'],
-        recommendedForModes: ['classic', 'progressive']
+        recommendedForModes: ['classic', 'progressive'],
       },
 
       // Zen Mode - Soft lavender and mint for relaxation
@@ -66,27 +69,28 @@ export class ColorPsychologyService {
         id: ThemeId.ZEN,
         name: 'Zen Mode',
         description: 'Soft, muted tones that induce meditative state and reduce anxiety',
-        psychologicalEffect: 'Induces meditative state, reduces anxiety, promotes inner peace through gentle pastels',
+        psychologicalEffect:
+          'Induces meditative state, reduces anxiety, promotes inner peace through gentle pastels',
         colors: {
-          primary: '#C5B9D4',      // Soft lavender - relaxation
-          accent: '#B8E6D5',       // Pale mint - serenity
-          success: '#A5C4A1',      // Gentle eucalyptus - peace
-          error: '#D4A5A5',        // Muted rose - non-threatening
-          hint: '#B4D7E6',         // Powder blue - gentle guidance
-          warning: '#D4C5A5',      // Soft sand
-          background: '#F5F3F7',   // Very light lavender
+          primary: '#C5B9D4', // Soft lavender - relaxation
+          accent: '#B8E6D5', // Pale mint - serenity
+          success: '#A5C4A1', // Gentle eucalyptus - peace
+          error: '#D4A5A5', // Muted rose - non-threatening
+          hint: '#B4D7E6', // Powder blue - gentle guidance
+          warning: '#D4C5A5', // Soft sand
+          background: '#F5F3F7', // Very light lavender
           backgroundSecondary: '#EFEDF2',
-          text: '#3D3547',         // Deep purple-gray
-          textSecondary: '#7A7284'
+          text: '#3D3547', // Deep purple-gray
+          textSecondary: '#7A7284',
         },
         accessibility: {
           contrastRatio: 10.2,
           colorBlindSafe: true,
           symbolsEnabled: false,
-          wcagLevel: 'AAA'
+          wcagLevel: 'AAA',
         },
         emotionalTags: ['relaxed', 'peaceful', 'calm'],
-        recommendedForModes: ['zen']
+        recommendedForModes: ['zen'],
       },
 
       // Competitive Mode - High energy, intense
@@ -94,27 +98,28 @@ export class ColorPsychologyService {
         id: ThemeId.COMPETITIVE,
         name: 'Competitive Mode',
         description: 'Intense colors that heighten alertness and competitive drive',
-        psychologicalEffect: 'Heightens alertness, competitive drive, and focus through high-contrast, energetic colors',
+        psychologicalEffect:
+          'Heightens alertness, competitive drive, and focus through high-contrast, energetic colors',
         colors: {
-          primary: '#1A2A3A',      // Deep navy - intensity
-          accent: '#00D9FF',       // Electric cyan - energy
-          success: '#FFD700',      // Victory gold - achievement
-          error: '#FF4444',        // Urgent red - immediate feedback
-          hint: '#FFA500',         // Warning amber - strategic
-          warning: '#FF6B35',      // Alert orange
-          background: '#0F1419',   // Very dark blue-black
+          primary: '#1A2A3A', // Deep navy - intensity
+          accent: '#00D9FF', // Electric cyan - energy
+          success: '#FFD700', // Victory gold - achievement
+          error: '#FF4444', // Urgent red - immediate feedback
+          hint: '#FFA500', // Warning amber - strategic
+          warning: '#FF6B35', // Alert orange
+          background: '#0F1419', // Very dark blue-black
           backgroundSecondary: '#1A2530',
-          text: '#FFFFFF',         // Pure white
-          textSecondary: '#B8C5D0'
+          text: '#FFFFFF', // Pure white
+          textSecondary: '#B8C5D0',
         },
         accessibility: {
           contrastRatio: 18.5,
           colorBlindSafe: true,
           symbolsEnabled: false,
-          wcagLevel: 'AAA'
+          wcagLevel: 'AAA',
         },
         emotionalTags: ['energetic', 'competitive', 'focused'],
-        recommendedForModes: ['time-trial', 'limited-moves', 'perfect-puzzle', 'speed-run']
+        recommendedForModes: ['time-trial', 'limited-moves', 'perfect-puzzle', 'speed-run'],
       },
 
       // High Contrast - WCAG AAA compliance (21:1 ratio)
@@ -122,27 +127,28 @@ export class ColorPsychologyService {
         id: ThemeId.HIGH_CONTRAST,
         name: 'High Contrast',
         description: 'Maximum visibility with 21:1 contrast ratio, WCAG AAA compliant',
-        psychologicalEffect: 'Maximum clarity for all vision types, reduces eye strain, enhances readability',
+        psychologicalEffect:
+          'Maximum clarity for all vision types, reduces eye strain, enhances readability',
         colors: {
-          primary: '#000000',      // Pure black
-          accent: '#0000FF',       // Pure blue
-          success: '#008000',      // Pure green
-          error: '#FF0000',        // Pure red
-          hint: '#0066CC',         // Dark blue
-          warning: '#FF8800',      // Bright orange
-          background: '#FFFFFF',   // Pure white
+          primary: '#000000', // Pure black
+          accent: '#0000FF', // Pure blue
+          success: '#008000', // Pure green
+          error: '#FF0000', // Pure red
+          hint: '#0066CC', // Dark blue
+          warning: '#FF8800', // Bright orange
+          background: '#FFFFFF', // Pure white
           backgroundSecondary: '#F0F0F0',
-          text: '#000000',         // Pure black
-          textSecondary: '#333333'
+          text: '#000000', // Pure black
+          textSecondary: '#333333',
         },
         accessibility: {
           contrastRatio: 21,
           colorBlindSafe: true,
           symbolsEnabled: true,
-          wcagLevel: 'AAA'
+          wcagLevel: 'AAA',
         },
         emotionalTags: ['focused'],
-        recommendedForModes: []
+        recommendedForModes: [],
       },
 
       // Protanopia (Red-blind) - Blue/Yellow optimized
@@ -150,27 +156,28 @@ export class ColorPsychologyService {
         id: ThemeId.PROTANOPIA,
         name: 'Protanopia Safe',
         description: 'Optimized for red color blindness using blue and yellow tones',
-        psychologicalEffect: 'Ensures full accessibility for protanopia through blue/yellow optimization',
+        psychologicalEffect:
+          'Ensures full accessibility for protanopia through blue/yellow optimization',
         colors: {
-          primary: '#0072B2',      // Strong blue
-          accent: '#F0E442',       // Bright yellow
-          success: '#009E73',      // Blue-green
-          error: '#D55E00',        // Orange (not red)
-          hint: '#56B4E9',         // Sky blue
-          warning: '#E69F00',      // Orange-yellow
+          primary: '#0072B2', // Strong blue
+          accent: '#F0E442', // Bright yellow
+          success: '#009E73', // Blue-green
+          error: '#D55E00', // Orange (not red)
+          hint: '#56B4E9', // Sky blue
+          warning: '#E69F00', // Orange-yellow
           background: '#FFFFFF',
           backgroundSecondary: '#F7F7F7',
           text: '#000000',
-          textSecondary: '#555555'
+          textSecondary: '#555555',
         },
         accessibility: {
           contrastRatio: 12.0,
           colorBlindSafe: true,
           symbolsEnabled: true,
-          wcagLevel: 'AAA'
+          wcagLevel: 'AAA',
         },
         emotionalTags: ['focused', 'calm'],
-        recommendedForModes: []
+        recommendedForModes: [],
       },
 
       // Deuteranopia (Green-blind) - Blue/Orange optimized
@@ -178,27 +185,28 @@ export class ColorPsychologyService {
         id: ThemeId.DEUTERANOPIA,
         name: 'Deuteranopia Safe',
         description: 'Optimized for green color blindness using blue and orange tones',
-        psychologicalEffect: 'Ensures full accessibility for deuteranopia through blue/orange optimization',
+        psychologicalEffect:
+          'Ensures full accessibility for deuteranopia through blue/orange optimization',
         colors: {
-          primary: '#0072B2',      // Strong blue
-          accent: '#E69F00',       // Orange
-          success: '#56B4E9',      // Sky blue
-          error: '#D55E00',        // Strong orange
-          hint: '#0072B2',         // Strong blue
-          warning: '#CC79A7',      // Rose
+          primary: '#0072B2', // Strong blue
+          accent: '#E69F00', // Orange
+          success: '#56B4E9', // Sky blue
+          error: '#D55E00', // Strong orange
+          hint: '#0072B2', // Strong blue
+          warning: '#CC79A7', // Rose
           background: '#FFFFFF',
           backgroundSecondary: '#F7F7F7',
           text: '#000000',
-          textSecondary: '#555555'
+          textSecondary: '#555555',
         },
         accessibility: {
           contrastRatio: 12.0,
           colorBlindSafe: true,
           symbolsEnabled: true,
-          wcagLevel: 'AAA'
+          wcagLevel: 'AAA',
         },
         emotionalTags: ['focused', 'calm'],
-        recommendedForModes: []
+        recommendedForModes: [],
       },
 
       // Tritanopia (Blue-blind) - Red/Green optimized
@@ -206,28 +214,29 @@ export class ColorPsychologyService {
         id: ThemeId.TRITANOPIA,
         name: 'Tritanopia Safe',
         description: 'Optimized for blue color blindness using red and green tones',
-        psychologicalEffect: 'Ensures full accessibility for tritanopia through red/green optimization',
+        psychologicalEffect:
+          'Ensures full accessibility for tritanopia through red/green optimization',
         colors: {
-          primary: '#D55E00',      // Orange-red
-          accent: '#009E73',       // Teal-green
-          success: '#00A86B',      // Jade green
-          error: '#CC0000',        // True red
-          hint: '#F0E442',         // Yellow
-          warning: '#E69F00',      // Amber
+          primary: '#D55E00', // Orange-red
+          accent: '#009E73', // Teal-green
+          success: '#00A86B', // Jade green
+          error: '#CC0000', // True red
+          hint: '#F0E442', // Yellow
+          warning: '#E69F00', // Amber
           background: '#FFFFFF',
           backgroundSecondary: '#F7F7F7',
           text: '#000000',
-          textSecondary: '#555555'
+          textSecondary: '#555555',
         },
         accessibility: {
           contrastRatio: 12.0,
           colorBlindSafe: true,
           symbolsEnabled: true,
-          wcagLevel: 'AAA'
+          wcagLevel: 'AAA',
         },
         emotionalTags: ['focused', 'energetic'],
-        recommendedForModes: []
-      }
+        recommendedForModes: [],
+      },
     ];
   }
 
@@ -249,7 +258,7 @@ export class ColorPsychologyService {
    * Get theme by ID
    */
   getThemeById(themeId: string): ColorTheme | null {
-    return this.themes.find(t => t.id === themeId) || null;
+    return this.themes.find((t) => t.id === themeId) || null;
   }
 
   /**
@@ -272,13 +281,13 @@ export class ColorPsychologyService {
   suggestThemeForMode(gameMode: string): ColorTheme {
     // Map game modes to themes based on psychological research
     const modeThemeMap: Record<string, ThemeId> = {
-      'zen': ThemeId.ZEN,
+      zen: ThemeId.ZEN,
       'time-trial': ThemeId.COMPETITIVE,
       'limited-moves': ThemeId.COMPETITIVE,
       'perfect-puzzle': ThemeId.COMPETITIVE,
       'speed-run': ThemeId.COMPETITIVE,
-      'classic': ThemeId.FOCUS,
-      'progressive': ThemeId.FOCUS
+      classic: ThemeId.FOCUS,
+      progressive: ThemeId.FOCUS,
     };
 
     const suggestedThemeId = modeThemeMap[gameMode] || ThemeId.FOCUS;
@@ -299,7 +308,7 @@ export class ColorPsychologyService {
         background: theme.colors.background,
         ratio: textBgRatio,
         required: 4.5,
-        passes: false
+        passes: false,
       });
     }
 
@@ -311,7 +320,7 @@ export class ColorPsychologyService {
         background: theme.colors.background,
         ratio: accentBgRatio,
         required: 3,
-        passes: false
+        passes: false,
       });
     }
 
@@ -339,7 +348,7 @@ export class ColorPsychologyService {
       meetsWCAG,
       wcagLevel,
       contrastIssues: issues,
-      recommendations
+      recommendations,
     };
   }
 
@@ -362,11 +371,9 @@ export class ColorPsychologyService {
    */
   private getLuminance(hexColor: string): number {
     const rgb = this.hexToRgb(hexColor);
-    const [r, g, b] = rgb.map(val => {
+    const [r, g, b] = rgb.map((val) => {
       const normalized = val / 255;
-      return normalized <= 0.03928
-        ? normalized / 12.92
-        : Math.pow((normalized + 0.055) / 1.055, 2.4);
+      return normalized <= 0.03928 ? normalized / 12.92 : ((normalized + 0.055) / 1.055) ** 2.4;
     });
 
     return 0.2126 * r + 0.7152 * g + 0.0722 * b;
@@ -388,10 +395,10 @@ export class ColorPsychologyService {
    */
   setColorBlindMode(mode: ColorBlindType): void {
     const themeMap: Record<ColorBlindType, ThemeId | null> = {
-      'none': null,
-      'protanopia': ThemeId.PROTANOPIA,
-      'deuteranopia': ThemeId.DEUTERANOPIA,
-      'tritanopia': ThemeId.TRITANOPIA
+      none: null,
+      protanopia: ThemeId.PROTANOPIA,
+      deuteranopia: ThemeId.DEUTERANOPIA,
+      tritanopia: ThemeId.TRITANOPIA,
     };
 
     const themeId = themeMap[mode];
@@ -412,10 +419,12 @@ export class ColorPsychologyService {
   getThemePreference(): ThemePreference {
     const stored = localStorage.getItem(this.STORAGE_KEY);
     if (stored) {
-      const parsed = JSON.parse(stored);
+      const parsed = JSON.parse(stored) as Omit<ThemePreference, 'lastUpdated'> & {
+        lastUpdated: string;
+      };
       return {
         ...parsed,
-        lastUpdated: new Date(parsed.lastUpdated)
+        lastUpdated: new Date(parsed.lastUpdated),
       };
     }
 
@@ -423,7 +432,7 @@ export class ColorPsychologyService {
       themeId: ThemeId.FOCUS,
       colorBlindMode: 'none',
       symbolsEnabled: false,
-      lastUpdated: new Date()
+      lastUpdated: new Date(),
     };
   }
 
@@ -448,13 +457,16 @@ export class ColorPsychologyService {
   /**
    * Apply color psychology to element based on emotion/state
    */
-  applyColorPsychology(element: HTMLElement, emotion: 'success' | 'error' | 'hint' | 'warning'): void {
+  applyColorPsychology(
+    element: HTMLElement,
+    emotion: 'success' | 'error' | 'hint' | 'warning'
+  ): void {
     const theme = this.currentTheme();
     const colorMap = {
-      'success': theme.colors.success,
-      'error': theme.colors.error,
-      'hint': theme.colors.hint,
-      'warning': theme.colors.warning
+      success: theme.colors.success,
+      error: theme.colors.error,
+      hint: theme.colors.hint,
+      warning: theme.colors.warning,
     };
 
     const color = colorMap[emotion];
@@ -504,7 +516,7 @@ export class ColorPsychologyService {
       themeId: this.currentTheme().id,
       colorBlindMode: this.getThemePreference().colorBlindMode,
       symbolsEnabled: this.getThemePreference().symbolsEnabled,
-      lastUpdated: new Date()
+      lastUpdated: new Date(),
     };
 
     localStorage.setItem(this.STORAGE_KEY, JSON.stringify(preference));
@@ -517,7 +529,7 @@ export class ColorPsychologyService {
     const stored = localStorage.getItem(this.STORAGE_KEY);
     if (stored) {
       try {
-        const preference: ThemePreference = JSON.parse(stored);
+        const preference = JSON.parse(stored) as ThemePreference;
         const theme = this.getThemeById(preference.themeId);
         if (theme) {
           this.currentTheme.set(theme);
@@ -532,6 +544,7 @@ export class ColorPsychologyService {
    * Get default theme
    */
   private getDefaultTheme(): ColorTheme {
-    return this.themes.find(t => t.id === ThemeId.FOCUS) || this.themes[0];
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
+    return this.themes.find((t) => t.id === ThemeId.FOCUS) || this.themes[0];
   }
 }

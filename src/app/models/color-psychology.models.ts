@@ -2,7 +2,13 @@
 // Based on research: 85% of first impressions are color-based
 // Accessibility: 8% men, 0.5% women have color vision deficiency
 
-export type EmotionalTag = 'calm' | 'energetic' | 'focused' | 'relaxed' | 'competitive' | 'peaceful';
+export type EmotionalTag =
+  | 'calm'
+  | 'energetic'
+  | 'focused'
+  | 'relaxed'
+  | 'competitive'
+  | 'peaceful';
 export type ColorBlindType = 'none' | 'protanopia' | 'deuteranopia' | 'tritanopia';
 
 export interface ColorPalette {
@@ -67,5 +73,5 @@ export enum ThemeId {
   HIGH_CONTRAST = 'high-contrast',
   PROTANOPIA = 'protanopia',
   DEUTERANOPIA = 'deuteranopia',
-  TRITANOPIA = 'tritanopia'
+  TRITANOPIA = 'tritanopia',
 }

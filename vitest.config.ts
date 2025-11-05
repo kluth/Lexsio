@@ -1,7 +1,8 @@
 /// <reference types="vitest" />
-import { defineConfig } from 'vitest/config';
-import angular from '@analogjs/vite-plugin-angular';
 import { resolve } from 'path';
+
+import angular from '@analogjs/vite-plugin-angular';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   plugins: [angular()],
@@ -22,8 +23,14 @@ export default defineConfig({
         '**/*.config.ts',
         '**/main.ts',
         '**/*.d.ts',
+        '**/*.routes.ts',
         'dist/',
         '.angular/',
+        '.eslintrc.js',
+        '.lintstagedrc.js',
+        '.prettierrc.js',
+        '.stylelintrc.js',
+        'test-results/',
       ],
       all: true,
       lines: 80,

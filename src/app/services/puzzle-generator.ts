@@ -1,18 +1,17 @@
 import { Injectable } from '@angular/core';
+
 import {
-  PuzzleDefinition,
   LixsoSymbol,
+  LShapePositions,
   LTile,
   LTileOrientation,
-  LShapePositions,
-  GridCell
+  PuzzleDefinition,
 } from '../models/game.models';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PuzzleGenerator {
-
   /**
    * Generate a new puzzle with unique solution
    * @param gridSize Size of the grid (typically 6 or 9)
@@ -21,26 +20,27 @@ export class PuzzleGenerator {
    */
   generatePuzzle(gridSize: number, difficulty: number): PuzzleDefinition {
     // Ensure grid size is divisible by 3 for L-tiles
-    if (gridSize % 3 !== 0) {
-      gridSize = 9; // Default to 9x9
+    let actualGridSize = gridSize;
+    if (actualGridSize % 3 !== 0) {
+      actualGridSize = 9; // Default to 9x9
     }
 
     // Generate a complete solution first
-    const solution = this.generateCompleteSolution(gridSize);
+    const solution = this.generateCompleteSolution(actualGridSize);
 
     if (!solution) {
       // Fallback to a simple puzzle if generation fails
-      return this.createFallbackPuzzle(gridSize, difficulty);
+      return this.createFallbackPuzzle(actualGridSize, difficulty);
     }
 
     // Extract hints based on difficulty
-    const prefilledCells = this.extractHints(solution, gridSize, difficulty);
+    const prefilledCells = this.extractHints(solution, actualGridSize, difficulty);
 
     return {
       gridSize,
       difficulty,
       prefilledCells,
-      solution
+      solution,
     };
   }
 
@@ -48,8 +48,9 @@ export class PuzzleGenerator {
    * Generate a complete valid solution for the puzzle
    */
   private generateCompleteSolution(gridSize: number): LTile[] | null {
-    const grid: (LixsoSymbol | null)[][] = Array(gridSize).fill(null).map(() =>
-      Array(gridSize).fill(null)
+    const grid: (LixsoSymbol | null)[][] = Array.from<null, (LixsoSymbol | null)[]>(
+      { length: gridSize },
+      () => Array.from<null, LixsoSymbol | null>({ length: gridSize }, () => null)
     );
     const tiles: LTile[] = [];
     const symbols = [LixsoSymbol.I, LixsoSymbol.X, LixsoSymbol.S, LixsoSymbol.O];
@@ -63,6 +64,7 @@ export class PuzzleGenerator {
   /**
    * Backtracking algorithm to fill the grid with L-tiles
    */
+  // eslint-disable-next-line max-params
   private fillGridBacktracking(
     grid: (LixsoSymbol | null)[][],
     tiles: LTile[],
@@ -77,7 +79,7 @@ export class PuzzleGenerator {
     let found = false;
 
     for (let r = row; r < gridSize && !found; r++) {
-      for (let c = (r === row ? col : 0); c < gridSize && !found; c++) {
+      for (let c = r === row ? col : 0; c < gridSize && !found; c++) {
         if (grid[r][c] === null) {
           nextRow = r;
           nextCol = c;
@@ -103,7 +105,7 @@ export class PuzzleGenerator {
           orientation,
           anchorRow: nextRow,
           anchorCol: nextCol,
-          placed: true
+          placed: true,
         };
 
         if (this.canPlaceTileOnGrid(grid, tile, gridSize)) {
@@ -172,9 +174,14 @@ export class PuzzleGenerator {
   ): boolean {
     // Check all 8 neighbors
     const neighbors = [
-      [-1, -1], [-1, 0], [-1, 1],
-      [0, -1],           [0, 1],
-      [1, -1],  [1, 0],  [1, 1]
+      [-1, -1],
+      [-1, 0],
+      [-1, 1],
+      [0, -1],
+      [0, 1],
+      [1, -1],
+      [1, 0],
+      [1, 1],
     ];
 
     for (const [dr, dc] of neighbors) {
@@ -222,16 +229,17 @@ export class PuzzleGenerator {
     solution: LTile[],
     gridSize: number,
     difficulty: number
-  ): Array<{row: number, col: number, symbol: LixsoSymbol}> {
+  ): Array<{ row: number; col: number; symbol: LixsoSymbol }> {
     // Calculate number of hints based on difficulty
     // Level 1: ~30% of cells, Level 6: ~5% of cells
     const totalCells = gridSize * gridSize;
-    const hintPercentage = Math.max(5, 35 - (difficulty * 5));
+    const hintPercentage = Math.max(5, 35 - difficulty * 5);
     const numHints = Math.floor((totalCells * hintPercentage) / 100);
 
-    const hints: Array<{row: number, col: number, symbol: LixsoSymbol}> = [];
-    const grid: (LixsoSymbol | null)[][] = Array(gridSize).fill(null).map(() =>
-      Array(gridSize).fill(null)
+    const hints: Array<{ row: number; col: number; symbol: LixsoSymbol }> = [];
+    const grid: (LixsoSymbol | null)[][] = Array.from<null, (LixsoSymbol | null)[]>(
+      { length: gridSize },
+      () => Array.from<null, LixsoSymbol | null>({ length: gridSize }, () => null)
     );
 
     // Place all tiles on grid
@@ -240,10 +248,10 @@ export class PuzzleGenerator {
     }
 
     // Collect all cell positions
-    const allPositions: Array<{row: number, col: number}> = [];
+    const allPositions: Array<{ row: number; col: number }> = [];
     for (let r = 0; r < gridSize; r++) {
       for (let c = 0; c < gridSize; c++) {
-        allPositions.push({row: r, col: c});
+        allPositions.push({ row: r, col: c });
       }
     }
 
@@ -253,7 +261,7 @@ export class PuzzleGenerator {
       const pos = shuffled[i];
       const symbol = grid[pos.row][pos.col];
       if (symbol) {
-        hints.push({row: pos.row, col: pos.col, symbol});
+        hints.push({ row: pos.row, col: pos.col, symbol });
       }
     }
 
@@ -264,7 +272,7 @@ export class PuzzleGenerator {
    * Create a fallback puzzle if generation fails
    */
   private createFallbackPuzzle(gridSize: number, difficulty: number): PuzzleDefinition {
-    const prefilledCells: Array<{row: number, col: number, symbol: LixsoSymbol}> = [];
+    const prefilledCells: Array<{ row: number; col: number; symbol: LixsoSymbol }> = [];
     const symbols = [LixsoSymbol.I, LixsoSymbol.X, LixsoSymbol.S, LixsoSymbol.O];
 
     // Create a simple pattern of hints
@@ -274,7 +282,7 @@ export class PuzzleGenerator {
         prefilledCells.push({
           row: i * step + 1,
           col: j * step + 1,
-          symbol: symbols[(i + j) % 4]
+          symbol: symbols[(i + j) % 4],
         });
       }
     }
@@ -282,7 +290,7 @@ export class PuzzleGenerator {
     return {
       gridSize,
       difficulty,
-      prefilledCells
+      prefilledCells,
     };
   }
 
@@ -301,7 +309,7 @@ export class PuzzleGenerator {
   /**
    * Verify if a puzzle has a unique solution (simplified check)
    */
-  verifyUniqueSolution(puzzle: PuzzleDefinition): boolean {
+  verifyUniqueSolution(_puzzle: PuzzleDefinition): boolean {
     // This is a simplified verification
     // A complete verification would require solving the puzzle
     // and checking if there's only one solution

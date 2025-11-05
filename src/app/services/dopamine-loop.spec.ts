@@ -2,15 +2,10 @@
 // RED phase: All tests should FAIL initially
 
 import { TestBed } from '@angular/core/testing';
+
+import { Goal, PlayerAction, PlayerProgress, RewardTier } from '../models/dopamine-loop.models';
+
 import { DopamineLoopService } from './dopamine-loop';
-import {
-  RewardTier,
-  AnticipationLevel,
-  DEFAULT_DOPAMINE_CONFIG,
-  PlayerProgress,
-  Goal,
-  PlayerAction
-} from '../models/dopamine-loop.models';
 
 describe('DopamineLoopService - TDD', () => {
   let service: DopamineLoopService;
@@ -108,7 +103,7 @@ describe('DopamineLoopService - TDD', () => {
     it('should track player engagement metrics', () => {
       const action: PlayerAction = {
         type: 'tile-placed',
-        timestamp: new Date()
+        timestamp: new Date(),
       };
 
       service.provideMicroFeedback(action);
@@ -145,7 +140,7 @@ describe('DopamineLoopService - TDD', () => {
     it('should provide immediate micro-feedback for actions', () => {
       const action: PlayerAction = {
         type: 'puzzle-completed',
-        timestamp: new Date()
+        timestamp: new Date(),
       };
 
       const feedback = service.provideMicroFeedback(action);
@@ -161,7 +156,7 @@ describe('DopamineLoopService - TDD', () => {
         bonus: 0,
         super: 0,
         mega: 0,
-        legendary: 0
+        legendary: 0,
       };
 
       // Generate 1000 rewards
@@ -267,8 +262,8 @@ describe('DopamineLoopService - TDD', () => {
     it('should show transparent probabilities when enabled', () => {
       const probabilities = service.getTransparentOdds();
       expect(probabilities).toBeTruthy();
-      expect(probabilities.standard).toBe(0.60);
-      expect(probabilities.bonus).toBe(0.30);
+      expect(probabilities.standard).toBe(0.6);
+      expect(probabilities.bonus).toBe(0.3);
       expect(probabilities.super).toBe(0.08);
       expect(probabilities.mega).toBe(0.019);
       expect(probabilities.legendary).toBe(0.001);
@@ -304,7 +299,7 @@ describe('DopamineLoopService - TDD', () => {
         completedPuzzles: 20,
         currentStreak: 3,
         achievements: [],
-        skillLevel: 60
+        skillLevel: 60,
       };
 
       const nextGoal = service.suggestNextGoal(progress);
@@ -321,7 +316,7 @@ describe('DopamineLoopService - TDD', () => {
         currentValue: 9,
         progressPercent: 90,
         category: 'puzzle',
-        difficulty: 5
+        difficulty: 5,
       };
 
       service.showProgressTowardReward(goal);
@@ -336,7 +331,7 @@ describe('DopamineLoopService - TDD', () => {
         completedPuzzles: 3,
         currentStreak: 0,
         achievements: [],
-        skillLevel: 20
+        skillLevel: 20,
       };
 
       const hardProgress: PlayerProgress = {
@@ -345,7 +340,7 @@ describe('DopamineLoopService - TDD', () => {
         completedPuzzles: 100,
         currentStreak: 15,
         achievements: ['master'],
-        skillLevel: 95
+        skillLevel: 95,
       };
 
       const easyGoal = service.suggestNextGoal(easyProgress);
@@ -396,6 +391,7 @@ describe('DopamineLoopService - TDD', () => {
   });
 
   describe('Integration - Full Dopamine Loop Cycle', () => {
+    // eslint-disable-next-line @typescript-eslint/require-await
     it('should execute complete 3-phase cycle', async () => {
       // Phase 1: Anticipation
       const anticipation = service.buildAnticipation(90);

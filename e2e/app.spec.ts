@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 test.describe('Lixso Game - Basic Loading', () => {
   test('should load the application and display title', async ({ page }) => {

@@ -1,33 +1,45 @@
-import { Component, EventEmitter, Output, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { GameMode, GAME_MODE_CONFIGS, GameModeConfig } from '../../models/game-modes.models';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  OnInit,
+  Output,
+  inject,
+} from '@angular/core';
+
+import { GAME_MODE_CONFIGS, GameMode, GameModeConfig } from '../../models/game-modes.models';
 import { ScoreService } from '../../services/score';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-game-menu',
   imports: [CommonModule],
   templateUrl: './game-menu.html',
   styleUrl: './game-menu.scss',
-  standalone: true
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
 })
 export class GameMenu implements OnInit {
-  @Output() modeSelected = new EventEmitter<{ mode: GameMode, difficulty: number }>();
+  @Output() modeSelected = new EventEmitter<{ mode: GameMode; difficulty: number }>();
+
   @Output() viewHighscores = new EventEmitter<void>();
+
   @Output() viewTournaments = new EventEmitter<void>();
 
   gameModes: GameModeConfig[] = [];
+
   selectedDifficulty = 3;
+
   playerName = 'Player';
 
-  constructor(private scoreService: ScoreService) {}
+  private scoreService = inject(ScoreService);
 
   ngOnInit(): void {
-    this.gameModes = Object.values(GAME_MODE_CONFIGS).filter(mode =>
-      mode.mode !== GameMode.MULTIPLAYER // Multiplayer shown separately
+    this.gameModes = Object.values(GAME_MODE_CONFIGS).filter(
+      (mode) => mode.mode !== GameMode.MULTIPLAYER // Multiplayer shown separately
     );
 
-    this.scoreService.getPlayerProfile().subscribe(profile => {
+    this.scoreService.getPlayerProfile().subscribe((profile) => {
       this.playerName = profile.name;
     });
   }

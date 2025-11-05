@@ -1,42 +1,50 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { Game } from '../../services/game';
+
+import { getPuzzleByDifficulty } from '../../data/puzzles';
 import {
   GameState,
   GridCell,
-  LTile,
   LixsoSymbol,
+  LTile,
   LTileOrientation,
-  SymbolColorMap
+  SymbolColorMap,
 } from '../../models/game.models';
-import { PUZZLES, getPuzzleByDifficulty } from '../../data/puzzles';
+import { Game } from '../../services/game';
 
 @Component({
   selector: 'app-game-board',
   imports: [CommonModule],
   templateUrl: './game-board.html',
   styleUrl: './game-board.scss',
-  standalone: true
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
 })
 export class GameBoard implements OnInit, OnDestroy {
   gameState: GameState | null = null;
+
   selectedSymbol: LixsoSymbol = LixsoSymbol.I;
+
   selectedOrientation: LTileOrientation = LTileOrientation.UP_RIGHT;
+
   previewTile: LTile | null = null;
+
   currentDifficulty = 1;
 
   // Enum references for template
   LixsoSymbol = LixsoSymbol;
+
   LTileOrientation = LTileOrientation;
+
   SymbolColorMap = SymbolColorMap;
 
   private subscription?: Subscription;
 
-  constructor(private gameService: Game) {}
+  private gameService = inject(Game);
 
   ngOnInit(): void {
-    this.subscription = this.gameService.getGameState().subscribe(state => {
+    this.subscription = this.gameService.getGameState().subscribe((state) => {
       this.gameState = state;
     });
 
@@ -66,7 +74,7 @@ export class GameBoard implements OnInit, OnDestroy {
       orientation: this.selectedOrientation,
       anchorRow: cell.row,
       anchorCol: cell.col,
-      placed: false
+      placed: false,
     };
 
     const success = this.gameService.placeTile(tile);
@@ -88,7 +96,7 @@ export class GameBoard implements OnInit, OnDestroy {
       orientation: this.selectedOrientation,
       anchorRow: cell.row,
       anchorCol: cell.col,
-      placed: false
+      placed: false,
     };
 
     this.gameService.previewTilePlacement(this.previewTile);
@@ -175,6 +183,8 @@ export class GameBoard implements OnInit, OnDestroy {
         return '┌';
       case LTileOrientation.UP_LEFT:
         return '└';
+      default:
+        return '⌐';
     }
   }
 }

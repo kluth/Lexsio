@@ -4,13 +4,13 @@
     *ngIf="currentView === 'menu'"
     (modeSelected)="onModeSelected($event)"
     (viewHighscores)="onViewHighscores()"
-    (viewTournaments)="onViewTournaments()">
-  </app-game-menu>
+    (viewTournaments)="onViewTournaments()"
+  />
 
   <!-- Game Board -->
   <div *ngIf="currentView === 'game'">
     <button class="back-button" (click)="backToMenu()">← Back to Menu</button>
-    <app-game-board></app-game-board>
+    <app-game-board />
   </div>
 
   <!-- Highscores View -->
@@ -27,5 +27,5 @@
     <p>Tournaments view coming soon!</p>
   </div>
 
-  <router-outlet></router-outlet>
+  <router-outlet />
 </div>

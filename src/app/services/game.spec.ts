@@ -1,20 +1,16 @@
-import { describe, it, expect, beforeEach } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { firstValueFrom } from 'rxjs';
+
+import { LixsoSymbol, LTile, LTileOrientation, PuzzleDefinition } from '../models/game.models';
+
 import { Game } from './game';
-import {
-  LixsoSymbol,
-  LTileOrientation,
-  LTile,
-  PuzzleDefinition
-} from '../models/game.models';
 
 describe('Game Service', () => {
   let service: Game;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [Game]
+      providers: [Game],
     });
     service = TestBed.inject(Game);
   });
@@ -38,8 +34,8 @@ describe('Game Service', () => {
         difficulty: 1,
         prefilledCells: [
           { row: 0, col: 0, symbol: LixsoSymbol.I },
-          { row: 2, col: 2, symbol: LixsoSymbol.X }
-        ]
+          { row: 2, col: 2, symbol: LixsoSymbol.X },
+        ],
       };
 
       service.startNewGame(puzzle);
@@ -58,7 +54,7 @@ describe('Game Service', () => {
       const puzzle: PuzzleDefinition = {
         gridSize: 9,
         difficulty: 1,
-        prefilledCells: []
+        prefilledCells: [],
       };
       service.startNewGame(puzzle);
     });
@@ -70,7 +66,7 @@ describe('Game Service', () => {
         orientation: LTileOrientation.UP_RIGHT,
         anchorRow: 0,
         anchorCol: 0,
-        placed: false
+        placed: false,
       };
 
       const result = service.placeTile(tile);
@@ -84,7 +80,7 @@ describe('Game Service', () => {
         orientation: LTileOrientation.UP_RIGHT,
         anchorRow: 8,
         anchorCol: 8,
-        placed: false
+        placed: false,
       };
 
       const result = service.placeTile(tile);
@@ -98,7 +94,7 @@ describe('Game Service', () => {
         orientation: LTileOrientation.UP_RIGHT,
         anchorRow: 0,
         anchorCol: 0,
-        placed: false
+        placed: false,
       };
 
       service.placeTile(tile1);
@@ -109,7 +105,7 @@ describe('Game Service', () => {
         orientation: LTileOrientation.UP_RIGHT,
         anchorRow: 0,
         anchorCol: 0,
-        placed: false
+        placed: false,
       };
 
       const result = service.placeTile(tile2);
@@ -124,7 +120,7 @@ describe('Game Service', () => {
         orientation: LTileOrientation.UP_RIGHT,
         anchorRow: 0,
         anchorCol: 0,
-        placed: false
+        placed: false,
       };
       service.placeTile(tile1);
 
@@ -135,7 +131,7 @@ describe('Game Service', () => {
         orientation: LTileOrientation.UP_RIGHT,
         anchorRow: 2,
         anchorCol: 0,
-        placed: false
+        placed: false,
       };
 
       const result = service.placeTile(tile2);
@@ -150,7 +146,7 @@ describe('Game Service', () => {
         orientation: LTileOrientation.UP_RIGHT,
         anchorRow: 0,
         anchorCol: 0,
-        placed: false
+        placed: false,
       };
       service.placeTile(tile1);
 
@@ -161,7 +157,7 @@ describe('Game Service', () => {
         orientation: LTileOrientation.UP_RIGHT,
         anchorRow: 2,
         anchorCol: 0,
-        placed: false
+        placed: false,
       };
 
       const result = service.placeTile(tile2);
@@ -174,7 +170,7 @@ describe('Game Service', () => {
       const puzzle: PuzzleDefinition = {
         gridSize: 9,
         difficulty: 1,
-        prefilledCells: []
+        prefilledCells: [],
       };
       service.startNewGame(puzzle);
 
@@ -184,7 +180,7 @@ describe('Game Service', () => {
         orientation: LTileOrientation.UP_RIGHT,
         anchorRow: 0,
         anchorCol: 0,
-        placed: false
+        placed: false,
       };
 
       service.placeTile(tile);
@@ -197,7 +193,7 @@ describe('Game Service', () => {
       const puzzle: PuzzleDefinition = {
         gridSize: 9,
         difficulty: 1,
-        prefilledCells: []
+        prefilledCells: [],
       };
       service.startNewGame(puzzle);
 
@@ -211,19 +207,40 @@ describe('Game Service', () => {
       const puzzle: PuzzleDefinition = {
         gridSize: 6,
         difficulty: 1,
-        prefilledCells: []
+        prefilledCells: [],
       };
       service.startNewGame(puzzle);
 
       // Fill entire 6x6 grid with valid tiles
       // This is a simplified test - in reality we'd need valid placement
       const tiles: LTile[] = [
-        { id: 't1', symbol: LixsoSymbol.I, orientation: LTileOrientation.UP_RIGHT, anchorRow: 0, anchorCol: 0, placed: false },
-        { id: 't2', symbol: LixsoSymbol.X, orientation: LTileOrientation.UP_RIGHT, anchorRow: 0, anchorCol: 2, placed: false },
-        { id: 't3', symbol: LixsoSymbol.S, orientation: LTileOrientation.UP_RIGHT, anchorRow: 0, anchorCol: 4, placed: false }
+        {
+          id: 't1',
+          symbol: LixsoSymbol.I,
+          orientation: LTileOrientation.UP_RIGHT,
+          anchorRow: 0,
+          anchorCol: 0,
+          placed: false,
+        },
+        {
+          id: 't2',
+          symbol: LixsoSymbol.X,
+          orientation: LTileOrientation.UP_RIGHT,
+          anchorRow: 0,
+          anchorCol: 2,
+          placed: false,
+        },
+        {
+          id: 't3',
+          symbol: LixsoSymbol.S,
+          orientation: LTileOrientation.UP_RIGHT,
+          anchorRow: 0,
+          anchorCol: 4,
+          placed: false,
+        },
       ];
 
-      tiles.forEach(tile => service.placeTile(tile));
+      tiles.forEach((tile) => service.placeTile(tile));
 
       const state = await firstValueFrom(service.getGameState());
       // We expect the game to track completion status
@@ -236,9 +253,7 @@ describe('Game Service', () => {
       const puzzle: PuzzleDefinition = {
         gridSize: 9,
         difficulty: 1,
-        prefilledCells: [
-          { row: 0, col: 0, symbol: LixsoSymbol.I }
-        ]
+        prefilledCells: [{ row: 0, col: 0, symbol: LixsoSymbol.I }],
       };
       service.startNewGame(puzzle);
 
@@ -249,7 +264,7 @@ describe('Game Service', () => {
         orientation: LTileOrientation.UP_RIGHT,
         anchorRow: 2,
         anchorCol: 2,
-        placed: false
+        placed: false,
       };
       service.placeTile(tile);
 
@@ -270,7 +285,7 @@ describe('Game Service', () => {
       const puzzle: PuzzleDefinition = {
         gridSize: 9,
         difficulty: 1,
-        prefilledCells: []
+        prefilledCells: [],
       };
       service.startNewGame(puzzle);
 
@@ -298,8 +313,8 @@ describe('Game Service', () => {
           { row: 1, col: 2, symbol: LixsoSymbol.I },
           { row: 2, col: 0, symbol: LixsoSymbol.I },
           { row: 2, col: 1, symbol: LixsoSymbol.I },
-          { row: 2, col: 2, symbol: LixsoSymbol.I }
-        ]
+          { row: 2, col: 2, symbol: LixsoSymbol.I },
+        ],
       };
       service.startNewGame(puzzle);
 

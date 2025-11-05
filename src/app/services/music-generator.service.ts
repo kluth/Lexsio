@@ -1,5 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import * as Tone from 'tone';
+
 import { GridCell, LTile, LixsoSymbol } from '../models/game.models';
 
 /**
@@ -9,7 +10,15 @@ import { GridCell, LTile, LixsoSymbol } from '../models/game.models';
  * Uses Tone.js for real-time music generation based on tile placements
  */
 
-export type MusicalScale = 'major' | 'minor' | 'pentatonic' | 'chromatic' | 'dorian' | 'phrygian' | 'lydian' | 'mixolydian';
+export type MusicalScale =
+  | 'major'
+  | 'minor'
+  | 'pentatonic'
+  | 'chromatic'
+  | 'dorian'
+  | 'phrygian'
+  | 'lydian'
+  | 'mixolydian';
 export type MusicGenre = 'classical' | 'jazz' | 'ambient' | 'electronic' | 'lo-fi';
 
 export interface MusicConfig {
@@ -36,7 +45,7 @@ const DEFAULT_CONFIG: MusicConfig = {
   genre: 'ambient',
   tempo: 120,
   playOnTilePlacement: true,
-  playOnCompletion: true
+  playOnCompletion: true,
 };
 
 // Musical scales in C
@@ -48,22 +57,24 @@ const SCALES: Record<MusicalScale, string[]> = {
   dorian: ['C4', 'D4', 'Eb4', 'F4', 'G4', 'A4', 'Bb4', 'C5'],
   phrygian: ['C4', 'Db4', 'Eb4', 'F4', 'G4', 'Ab4', 'Bb4', 'C5'],
   lydian: ['C4', 'D4', 'E4', 'F#4', 'G4', 'A4', 'B4', 'C5'],
-  mixolydian: ['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'Bb4', 'C5']
+  mixolydian: ['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'Bb4', 'C5'],
 };
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class MusicGeneratorService {
   private config = signal<MusicConfig>(DEFAULT_CONFIG);
+
   private synth: Tone.PolySynth | null = null;
+
   private initialized = false;
 
   private tileNoteMapping: Map<LixsoSymbol, number> = new Map([
     [LixsoSymbol.I, 0], // Root
     [LixsoSymbol.X, 2], // Third
     [LixsoSymbol.S, 4], // Fifth
-    [LixsoSymbol.O, 6]  // Seventh
+    [LixsoSymbol.O, 6], // Seventh
   ]);
 
   constructor() {
@@ -73,26 +84,25 @@ export class MusicGeneratorService {
   /**
    * Initialize Tone.js audio context
    */
-  private async initializeAudio(): Promise<void> {
+  private initializeAudio(): void {
     try {
       // Create polyphonic synthesizer
       this.synth = new Tone.PolySynth(Tone.Synth, {
         oscillator: {
-          type: 'sine'
+          type: 'sine',
         },
         envelope: {
           attack: 0.1,
           decay: 0.2,
           sustain: 0.5,
-          release: 0.8
-        }
+          release: 0.8,
+        },
       }).toDestination();
 
       // Set initial volume
       this.synth.volume.value = this.volumeToDb(this.config().volume);
 
       this.initialized = true;
-      console.log('[Music] Tone.js initialized successfully! 🎵');
     } catch (error) {
       console.error('[Music] Failed to initialize audio:', error);
     }
@@ -149,7 +159,7 @@ export class MusicGeneratorService {
       symbol: tile.symbol,
       note: Tone.Frequency(scale[finalIndex]).transpose(octaveShift).toNote(),
       duration: '8n', // Eighth note
-      velocity: 0.7
+      velocity: 0.7,
     };
   }
 
@@ -164,9 +174,9 @@ export class MusicGeneratorService {
     let goingRight = true;
 
     for (let row = 0; row < grid.length; row++) {
-      const cols = goingRight ?
-        Array.from({ length: grid[row].length }, (_, i) => i) :
-        Array.from({ length: grid[row].length }, (_, i) => grid[row].length - 1 - i);
+      const cols = goingRight
+        ? Array.from({ length: grid[row].length }, (_, i) => i)
+        : Array.from({ length: grid[row].length }, (_, i) => grid[row].length - 1 - i);
 
       for (const col of cols) {
         const cell = grid[row][col];
@@ -176,7 +186,7 @@ export class MusicGeneratorService {
             symbol: cell.symbol,
             note: scale[noteIndex],
             duration: '16n', // Sixteenth note for faster playback
-            velocity: cell.prefilled ? 0.5 : 0.8 // Softer for prefilled
+            velocity: cell.prefilled ? 0.5 : 0.8, // Softer for prefilled
           });
         }
       }
@@ -200,10 +210,10 @@ export class MusicGeneratorService {
   /**
    * Play a melody (sequence of notes)
    */
-  private async playMelody(notes: TileNote[]): Promise<void> {
+  private playMelody(notes: TileNote[]): void {
     if (!this.synth || notes.length === 0) return;
 
-    const config = this.config();
+    const _config = this.config();
     const noteLength = Tone.Time('16n').toSeconds(); // Convert to seconds
 
     // Create a sequence
@@ -227,7 +237,7 @@ export class MusicGeneratorService {
     return [
       scale[0], // Root
       scale[2], // Third
-      scale[4]  // Fifth
+      scale[4], // Fifth
     ];
   }
 
@@ -245,26 +255,25 @@ export class MusicGeneratorService {
   private async ensureAudioContext(): Promise<void> {
     if (Tone.context.state !== 'running') {
       await Tone.start();
-      console.log('[Music] Audio context started');
     }
   }
 
   /**
    * Export puzzle as MIDI file
    */
-  public exportAsMIDI(grid: GridCell[][], filename: string = 'lixso-puzzle.mid'): void {
+  public exportAsMIDI(grid: GridCell[][], _filename: string = 'lixso-puzzle.mid'): void {
     // This would require additional MIDI export library
-    console.log('[Music] MIDI export not yet implemented');
     // TODO: Implement MIDI export using @tonejs/midi
+    // Not yet implemented
   }
 
   /**
    * Public API
    */
 
-  public async setVolume(volume: number): Promise<void> {
+  public setVolume(volume: number): void {
     const clampedVolume = Math.max(0, Math.min(1, volume));
-    this.config.update(c => ({ ...c, volume: clampedVolume }));
+    this.config.update((c) => ({ ...c, volume: clampedVolume }));
 
     if (this.synth) {
       this.synth.volume.value = this.volumeToDb(clampedVolume);
@@ -272,22 +281,22 @@ export class MusicGeneratorService {
   }
 
   public setScale(scale: MusicalScale): void {
-    this.config.update(c => ({ ...c, scale }));
+    this.config.update((c) => ({ ...c, scale }));
   }
 
   public setGenre(genre: MusicGenre): void {
-    this.config.update(c => ({ ...c, genre }));
+    this.config.update((c) => ({ ...c, genre }));
     this.applyGenreSettings(genre);
   }
 
   public setTempo(tempo: number): void {
     const clampedTempo = Math.max(60, Math.min(240, tempo));
-    this.config.update(c => ({ ...c, tempo: clampedTempo }));
+    this.config.update((c) => ({ ...c, tempo: clampedTempo }));
     Tone.getTransport().bpm.value = clampedTempo;
   }
 
   public toggleEnabled(): void {
-    this.config.update(c => ({ ...c, enabled: !c.enabled }));
+    this.config.update((c) => ({ ...c, enabled: !c.enabled }));
   }
 
   public getConfig(): MusicConfig {
@@ -295,7 +304,7 @@ export class MusicGeneratorService {
   }
 
   public updateConfig(partial: Partial<MusicConfig>): void {
-    this.config.update(current => ({ ...current, ...partial }));
+    this.config.update((current) => ({ ...current, ...partial }));
 
     // Apply changes
     if (partial.volume !== undefined && this.synth) {
@@ -319,36 +328,39 @@ export class MusicGeneratorService {
       case 'classical':
         this.synth.set({
           oscillator: { type: 'sine' },
-          envelope: { attack: 0.1, decay: 0.2, sustain: 0.5, release: 0.8 }
+          envelope: { attack: 0.1, decay: 0.2, sustain: 0.5, release: 0.8 },
         });
         break;
 
       case 'jazz':
         this.synth.set({
           oscillator: { type: 'triangle' },
-          envelope: { attack: 0.05, decay: 0.1, sustain: 0.3, release: 0.5 }
+          envelope: { attack: 0.05, decay: 0.1, sustain: 0.3, release: 0.5 },
         });
         break;
 
       case 'ambient':
         this.synth.set({
           oscillator: { type: 'sine' },
-          envelope: { attack: 0.5, decay: 1.0, sustain: 0.7, release: 2.0 }
+          envelope: { attack: 0.5, decay: 1.0, sustain: 0.7, release: 2.0 },
         });
         break;
 
       case 'electronic':
         this.synth.set({
           oscillator: { type: 'square' },
-          envelope: { attack: 0.01, decay: 0.1, sustain: 0.2, release: 0.3 }
+          envelope: { attack: 0.01, decay: 0.1, sustain: 0.2, release: 0.3 },
         });
         break;
 
       case 'lo-fi':
         this.synth.set({
           oscillator: { type: 'sawtooth' },
-          envelope: { attack: 0.05, decay: 0.2, sustain: 0.4, release: 0.6 }
+          envelope: { attack: 0.05, decay: 0.2, sustain: 0.4, release: 0.6 },
         });
+        break;
+
+      default:
         break;
     }
   }
@@ -362,22 +374,22 @@ export class MusicGeneratorService {
     const scale = SCALES[this.config().scale];
     const notes = [scale[0], scale[2], scale[4], scale[7] || scale[0]];
 
-    let time = Tone.now();
+    let _time = 0;
     for (const note of notes) {
       this.playNote(note, '4n', 0.7);
-      time += 0.25;
+      _time += 0.25;
     }
   }
 
   /**
    * Cleanup
    */
-  public async destroy(): Promise<void> {
+  public destroy(): void {
     if (this.synth) {
       this.synth.dispose();
       this.synth = null;
     }
-    await Tone.getContext().dispose();
+    Tone.getContext().dispose();
     this.initialized = false;
   }
 }

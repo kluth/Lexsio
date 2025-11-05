@@ -1,31 +1,34 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+
 import {
-  Score,
-  Highscore,
-  GameMode,
-  GameStats,
-  PlayerProfile,
   Achievement,
   ACHIEVEMENTS,
+  GameMode,
+  GameStats,
+  Highscore,
+  PlayerProfile,
+  Score,
   Tournament,
-  TournamentParticipant
 } from '../models/game-modes.models';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ScoreService {
   private readonly STORAGE_KEY_SCORES = 'lixso_highscores';
+
   private readonly STORAGE_KEY_PROFILE = 'lixso_player_profile';
+
   private readonly STORAGE_KEY_TOURNAMENTS = 'lixso_tournaments';
 
   private highscores$ = new BehaviorSubject<Highscore[]>(this.loadHighscores());
-  private playerProfile$ = new BehaviorSubject<PlayerProfile>(this.loadPlayerProfile());
-  private currentStats$ = new BehaviorSubject<GameStats>(this.initializeStats());
-  private tournaments$ = new BehaviorSubject<Tournament[]>(this.loadTournaments());
 
-  constructor() {}
+  private playerProfile$ = new BehaviorSubject<PlayerProfile>(this.loadPlayerProfile());
+
+  private currentStats$ = new BehaviorSubject<GameStats>(this.initializeStats());
+
+  private tournaments$ = new BehaviorSubject<Tournament[]>(this.loadTournaments());
 
   // ===== Current Game Stats =====
 
@@ -75,13 +78,18 @@ export class ScoreService {
       hints: 0,
       errors: 0,
       timeElapsed: 0,
-      completed: false
+      completed: false,
     };
   }
 
   // ===== Score Calculation =====
 
-  calculateScore(stats: GameStats, mode: GameMode, difficulty: number, scoreMultiplier: number): number {
+  calculateScore(
+    stats: GameStats,
+    mode: GameMode,
+    difficulty: number,
+    scoreMultiplier: number
+  ): number {
     if (!stats.completed) {
       return 0;
     }
@@ -107,7 +115,7 @@ export class ScoreService {
     score -= stats.hints * 30;
 
     // Difficulty multiplier
-    score *= (1 + difficulty * 0.2);
+    score *= 1 + difficulty * 0.2;
 
     // Mode multiplier
     score *= scoreMultiplier;
@@ -123,23 +131,25 @@ export class ScoreService {
 
   getHighscoresForMode(mode: GameMode, difficulty?: number): Score[] {
     const highscores = this.highscores$.value;
-    const modeHighscores = highscores.filter(h =>
-      h.mode === mode && (difficulty === undefined || h.difficulty === difficulty)
+    const modeHighscores = highscores.filter(
+      (h) => h.mode === mode && (difficulty === undefined || h.difficulty === difficulty)
     );
 
-    const allScores = modeHighscores.flatMap(h => h.scores);
+    const allScores = modeHighscores.flatMap((h) => h.scores);
     return allScores.sort((a, b) => b.score - a.score).slice(0, 10);
   }
 
   addScore(score: Score): void {
     const highscores = this.highscores$.value;
-    let modeHighscore = highscores.find(h => h.mode === score.mode && h.difficulty === score.difficulty);
+    let modeHighscore = highscores.find(
+      (h) => h.mode === score.mode && h.difficulty === score.difficulty
+    );
 
     if (!modeHighscore) {
       modeHighscore = {
         mode: score.mode,
         difficulty: score.difficulty,
-        scores: []
+        scores: [],
       };
       highscores.push(modeHighscore);
     }
@@ -168,7 +178,7 @@ export class ScoreService {
   private loadHighscores(): Highscore[] {
     try {
       const stored = localStorage.getItem(this.STORAGE_KEY_SCORES);
-      return stored ? JSON.parse(stored) : [];
+      return stored ? (JSON.parse(stored) as Highscore[]) : [];
     } catch {
       return [];
     }
@@ -209,8 +219,9 @@ export class ScoreService {
     try {
       const stored = localStorage.getItem(this.STORAGE_KEY_PROFILE);
       if (stored) {
-        return JSON.parse(stored);
+        return JSON.parse(stored) as PlayerProfile;
       }
+      // eslint-disable-next-line no-empty
     } catch {}
 
     return {
@@ -220,7 +231,7 @@ export class ScoreService {
       gamesWon: 0,
       totalScore: 0,
       achievements: [],
-      createdAt: Date.now()
+      createdAt: Date.now(),
     };
   }
 
@@ -255,7 +266,11 @@ export class ScoreService {
     }
 
     // Grandmaster
-    if (score.mode === GameMode.PERFECT && score.difficulty === 6 && !this.hasAchievement('grandmaster')) {
+    if (
+      score.mode === GameMode.PERFECT &&
+      score.difficulty === 6 &&
+      !this.hasAchievement('grandmaster')
+    ) {
       newAchievements.push(this.unlockAchievement('grandmaster'));
     }
 
@@ -268,11 +283,11 @@ export class ScoreService {
 
   private hasAchievement(achievementId: string): boolean {
     const profile = this.playerProfile$.value;
-    return profile.achievements.some(a => a.id === achievementId);
+    return profile.achievements.some((a) => a.id === achievementId);
   }
 
   private unlockAchievement(achievementId: string): Achievement {
-    const achievement = ACHIEVEMENTS.find(a => a.id === achievementId);
+    const achievement = ACHIEVEMENTS.find((a) => a.id === achievementId);
     if (!achievement) {
       throw new Error(`Achievement ${achievementId} not found`);
     }
@@ -291,7 +306,7 @@ export class ScoreService {
       ...tournament,
       id: this.generateId(),
       participants: [],
-      status: tournament.startTime > Date.now() ? 'upcoming' : 'active'
+      status: tournament.startTime > Date.now() ? 'upcoming' : 'active',
     };
 
     tournaments.push(newTournament);
@@ -301,15 +316,15 @@ export class ScoreService {
 
   joinTournament(tournamentId: string): void {
     const tournaments = this.tournaments$.value;
-    const tournament = tournaments.find(t => t.id === tournamentId);
+    const tournament = tournaments.find((t) => t.id === tournamentId);
     const profile = this.playerProfile$.value;
 
-    if (tournament && !tournament.participants.some(p => p.playerId === profile.id)) {
+    if (tournament && !tournament.participants.some((p) => p.playerId === profile.id)) {
       tournament.participants.push({
         playerId: profile.id,
         playerName: profile.name,
         score: 0,
-        completed: false
+        completed: false,
       });
 
       this.saveTournaments(tournaments);
@@ -319,11 +334,11 @@ export class ScoreService {
 
   submitTournamentScore(tournamentId: string, score: number): void {
     const tournaments = this.tournaments$.value;
-    const tournament = tournaments.find(t => t.id === tournamentId);
+    const tournament = tournaments.find((t) => t.id === tournamentId);
     const profile = this.playerProfile$.value;
 
     if (tournament) {
-      const participant = tournament.participants.find(p => p.playerId === profile.id);
+      const participant = tournament.participants.find((p) => p.playerId === profile.id);
       if (participant) {
         participant.score = score;
         participant.completed = true;
@@ -344,10 +359,10 @@ export class ScoreService {
     try {
       const stored = localStorage.getItem(this.STORAGE_KEY_TOURNAMENTS);
       if (stored) {
-        const tournaments: Tournament[] = JSON.parse(stored);
+        const tournaments = JSON.parse(stored) as Tournament[];
 
         // Update tournament statuses
-        tournaments.forEach(t => {
+        tournaments.forEach((t) => {
           const now = Date.now();
           if (t.endTime < now) {
             t.status = 'completed';
@@ -360,6 +375,7 @@ export class ScoreService {
 
         return tournaments;
       }
+      // eslint-disable-next-line no-empty
     } catch {}
 
     return [];

@@ -6,27 +6,35 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.6+-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A modern implementation of **Lixso**, the Belgian logic puzzle game, built with Angular. Fill the grid with L-shaped tiles without letting the same colors touch!
+A modern implementation of **Lixso**, the Belgian logic puzzle game, built with
+Angular. Fill the grid with L-shaped tiles without letting the same colors
+touch!
 
 ## 🎯 What is Lixso?
 
-Lixso is a logic puzzle game that combines elements of Sudoku with spatial reasoning. Players must:
+Lixso is a logic puzzle game that combines elements of Sudoku with spatial
+reasoning. Players must:
+
 - Fill a grid with L-shaped tiles (each covering 3 cells)
-- Use 4 different symbols/colors: **I** (Yellow), **X** (Red), **S** (Green), **O** (Blue)
+- Use 4 different symbols/colors: **I** (Yellow), **X** (Red), **S** (Green),
+  **O** (Blue)
 - Ensure tiles with the same symbol never touch (sides or corners)
 - Complete the entire grid with one unique solution
 
 ## ✨ Features
 
 ### 🎲 Core Gameplay
+
 - **Multiple Grid Sizes**: 6x6, 9x9, and 12x12 grids
 - **6 Difficulty Levels**: From beginner to expert
-- **Dynamic Puzzle Generator**: Generates puzzles with unique solutions using backtracking algorithm
+- **Dynamic Puzzle Generator**: Generates puzzles with unique solutions using
+  backtracking algorithm
 - **Smart Collision Detection**: Validates tile placements in real-time
 - **Hint System**: Get suggestions when you're stuck
 - **Undo/Reset**: Experiment without fear
 
 ### 🎮 Game Modes (7 Modes!)
+
 1. **🎯 Classic**: Standard puzzle solving - take your time and enjoy
 2. **⏱️ Time Trial**: Race against the clock (5 minutes)
 3. **🎲 Limited Moves**: Complete with only 30 tile placements
@@ -36,6 +44,7 @@ Lixso is a logic puzzle game that combines elements of Sudoku with spatial reaso
 7. **🚀 Speed Run**: Solve as many puzzles as possible in 10 minutes
 
 ### 🏆 Progression System
+
 - **Highscores**: Track your best scores per mode and difficulty
 - **Achievements**: Unlock 8 different achievements
   - 🎊 First Victory
@@ -50,6 +59,7 @@ Lixso is a logic puzzle game that combines elements of Sudoku with spatial reaso
 - **Tournament System**: Compete in timed tournaments
 
 ### 📱 UI/UX
+
 - **Mobile-First Design**: Optimized for smartphones, tablets, and desktops
 - **Responsive Layout**: Adapts to any screen size
 - **Touch-Optimized Controls**: Smooth touch interactions
@@ -60,6 +70,7 @@ Lixso is a logic puzzle game that combines elements of Sudoku with spatial reaso
 ## 🚀 Quick Start
 
 ### Prerequisites
+
 - Node.js 20+ or 22+
 - npm 10+
 
@@ -94,14 +105,32 @@ npm run build
 npm test
 
 # Run tests with coverage
-npm run test -- --code-coverage
+npm run test:coverage
 
-# Run linter
-npm run lint
+# Run E2E tests
+npm run test:e2e
+
+# Linting & Formatting
+npm run lint              # Run all linters
+npm run lint:fix          # Auto-fix linting issues
+npm run format            # Format code with Prettier
+npm run format:check      # Check formatting
 
 # Build for GitHub Pages
-npm run build -- --base-href /lexsio/
+npm run build -- --base-href /lixso/
 ```
+
+### Code Quality Tools
+
+We use comprehensive linting to ensure code quality:
+
+- **ESLint** - TypeScript/JavaScript linting with Airbnb rules
+- **Prettier** - Automatic code formatting
+- **StyleLint** - SCSS/CSS linting
+- **HTMLHint** - HTML template validation
+- **Pre-commit hooks** - Auto-lint and format on commit
+
+See [LINTING.md](./LINTING.md) for detailed documentation.
 
 ### Project Structure
 
@@ -138,20 +167,25 @@ npm run test -- --no-watch --no-progress --browsers=ChromeHeadless
 ```
 
 ### Test Coverage
-- **Game Service**: 75+ test cases covering tile placement, collision detection, and game completion
+
+- **Game Service**: 75+ test cases covering tile placement, collision detection,
+  and game completion
 - **Score Service**: 60+ test cases for scoring, achievements, and tournaments
 - **Puzzle Generator**: 30+ test cases for puzzle generation and validation
 - **Total**: 165+ test cases
 
 ## 🔄 CI/CD
 
-The project uses **optimized GitHub Actions** workflows for automated testing and deployment:
+The project uses **optimized GitHub Actions** workflows for automated testing
+and deployment:
 
 ### Main CI/CD Pipeline (`ci-cd.yml`)
+
 - ⚡️ **60% faster** than traditional CI/CD (6-8 min vs 15-20 min)
 - ✅ Runs on every push and pull request
 - 🔄 **Parallel execution** - Lint, tests, and build run simultaneously
-- 💾 **Aggressive caching** - NPM (95%+ hit rate), Playwright browsers (90%+ hit rate)
+- 💾 **Aggressive caching** - NPM (95%+ hit rate), Playwright browsers (90%+ hit
+  rate)
 - 🧪 Tests on Node.js 20.x and 22.x in parallel
 - 🌐 E2E tests across Chromium, Firefox, WebKit, and mobile browsers
 - 📊 Auto-comments coverage reports on PRs
@@ -159,6 +193,7 @@ The project uses **optimized GitHub Actions** workflows for automated testing an
 - 🚀 Auto-deploys to GitHub Pages on main/master
 
 ### PR Enhancement Checks (`pr-checks.yml`)
+
 - 🏷️ Auto-labels PRs based on changed files
 - 📏 Adds size labels (xs, s, m, l, xl)
 - ⚡️ Lighthouse CI performance metrics
@@ -166,6 +201,7 @@ The project uses **optimized GitHub Actions** workflows for automated testing an
 - ✅ Spell checking and TODO detection
 
 ### Automated Maintenance (`dependency-updates.yml`)
+
 - 🤖 Weekly automated dependency updates
 - 🔒 Security audits with npm audit and Trivy
 - 📊 Creates PRs for outdated packages
@@ -173,6 +209,7 @@ The project uses **optimized GitHub Actions** workflows for automated testing an
 ## 🎨 Game Rules
 
 ### Basic Rules
+
 1. The grid must be completely filled with L-shaped tiles
 2. Each L-tile covers exactly 3 cells
 3. There are 4 symbols (I, X, S, O) with corresponding colors
@@ -180,14 +217,18 @@ The project uses **optimized GitHub Actions** workflows for automated testing an
 5. Pre-filled cells are hints and cannot be changed
 
 ### L-Tile Orientations
+
 Each L-tile can be rotated into 4 orientations:
+
 - ⌐ Up-Right
 - ┐ Down-Right
 - ┌ Down-Left
 - └ Up-Left
 
 ### Scoring
+
 Your score is calculated based on:
+
 - ⏱️ **Time Efficiency**: Faster completion = higher score
 - 🎯 **Move Efficiency**: Fewer moves = better score
 - ❌ **Errors**: Penalties for mistakes
@@ -207,6 +248,7 @@ Your score is calculated based on:
 Contributions are welcome! Please feel free to submit a Pull Request.
 
 ### Development Process
+
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
 3. Write tests first (TDD approach)
@@ -219,6 +261,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## 📝 Roadmap
 
 ### Upcoming Features
+
 - [ ] Web-AI powered hint system
 - [ ] AI-based puzzle difficulty analyzer
 - [ ] Real-time multiplayer via WebSocket
@@ -230,13 +273,15 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the LICENSE file for
+details.
 
 ## 🙏 Acknowledgments
 
 - Inspired by the original **Lixso** game from Belgium
 - Based on the Four Color Theorem
-- Built with [Angular CLI](https://github.com/angular/angular-cli) version 20.3.8
+- Built with [Angular CLI](https://github.com/angular/angular-cli) version
+  20.3.8
 
 ## 📧 Contact
 
