@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  OnInit,
+  Output,
+  inject,
+} from '@angular/core';
 
 import { GAME_MODE_CONFIGS, GameMode, GameModeConfig } from '../../models/game-modes.models';
 import { ScoreService } from '../../services/score';
@@ -9,6 +16,7 @@ import { ScoreService } from '../../services/score';
   imports: [CommonModule],
   templateUrl: './game-menu.html',
   styleUrl: './game-menu.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
 })
 export class GameMenu implements OnInit {
@@ -24,7 +32,7 @@ export class GameMenu implements OnInit {
 
   playerName = 'Player';
 
-  constructor(private scoreService: ScoreService) {}
+  private scoreService = inject(ScoreService);
 
   ngOnInit(): void {
     this.gameModes = Object.values(GAME_MODE_CONFIGS).filter(

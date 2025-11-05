@@ -48,9 +48,10 @@ export class PuzzleGenerator {
    * Generate a complete valid solution for the puzzle
    */
   private generateCompleteSolution(gridSize: number): LTile[] | null {
-    const grid: (LixsoSymbol | null)[][] = Array(gridSize)
-      .fill(null)
-      .map(() => Array(gridSize).fill(null));
+    const grid: (LixsoSymbol | null)[][] = Array.from<null, (LixsoSymbol | null)[]>(
+      { length: gridSize },
+      () => Array.from<null, LixsoSymbol | null>({ length: gridSize }, () => null)
+    );
     const tiles: LTile[] = [];
     const symbols = [LixsoSymbol.I, LixsoSymbol.X, LixsoSymbol.S, LixsoSymbol.O];
 
@@ -63,6 +64,7 @@ export class PuzzleGenerator {
   /**
    * Backtracking algorithm to fill the grid with L-tiles
    */
+  // eslint-disable-next-line max-params
   private fillGridBacktracking(
     grid: (LixsoSymbol | null)[][],
     tiles: LTile[],
@@ -235,9 +237,10 @@ export class PuzzleGenerator {
     const numHints = Math.floor((totalCells * hintPercentage) / 100);
 
     const hints: Array<{ row: number; col: number; symbol: LixsoSymbol }> = [];
-    const grid: (LixsoSymbol | null)[][] = Array(gridSize)
-      .fill(null)
-      .map(() => Array(gridSize).fill(null));
+    const grid: (LixsoSymbol | null)[][] = Array.from<null, (LixsoSymbol | null)[]>(
+      { length: gridSize },
+      () => Array.from<null, LixsoSymbol | null>({ length: gridSize }, () => null)
+    );
 
     // Place all tiles on grid
     for (const tile of solution) {

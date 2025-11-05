@@ -159,7 +159,7 @@ export class ThemeService {
     try {
       const saved = localStorage.getItem(this.STORAGE_KEY);
       if (saved) {
-        return { ...DEFAULT_THEME, ...JSON.parse(saved) };
+        return { ...DEFAULT_THEME, ...(JSON.parse(saved) as Partial<ThemeSettings>) };
       }
     } catch (error) {
       console.error('Error loading theme settings:', error);

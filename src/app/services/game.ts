@@ -266,6 +266,7 @@ export class Game {
               placed: false,
             };
 
+            // eslint-disable-next-line max-depth
             if (this.canPlaceTile(testTile)) {
               return testTile;
             }

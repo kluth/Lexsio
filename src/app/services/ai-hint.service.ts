@@ -453,6 +453,7 @@ Respond in this JSON format:
               placed: false,
             };
 
+            // eslint-disable-next-line max-depth
             if (this.isValidPlacement(grid, tile)) {
               return { tile, position: { row, col } };
             }

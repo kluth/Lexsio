@@ -448,7 +448,9 @@ export class DopamineLoopService {
     const stored = localStorage.getItem(this.STORAGE_KEY);
     if (stored) {
       try {
-        const parsed = JSON.parse(stored);
+        const parsed = JSON.parse(stored) as Partial<
+          Omit<EngagementState, 'lastRewardTime'> & { lastRewardTime: string | undefined }
+        >;
         this.state.update((s) => ({
           ...s,
           ...parsed,

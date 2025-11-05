@@ -278,12 +278,14 @@ describe('ColorPsychologyService - TDD', () => {
 
     it('should recommend Zen theme for relaxation', () => {
       const recommendations = service.getThemeRecommendations({ emotionalState: 'stressed' });
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
       const zenTheme = recommendations.find((t) => t.id === ThemeId.ZEN);
       expect(zenTheme).toBeTruthy();
     });
 
     it('should recommend Competitive theme for high-energy modes', () => {
       const recommendations = service.getThemeRecommendations({ emotionalState: 'energetic' });
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
       const competitiveTheme = recommendations.find((t) => t.id === ThemeId.COMPETITIVE);
       expect(competitiveTheme).toBeTruthy();
     });

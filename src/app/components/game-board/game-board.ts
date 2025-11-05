@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 
 import { getPuzzleByDifficulty } from '../../data/puzzles';
@@ -18,6 +18,7 @@ import { Game } from '../../services/game';
   imports: [CommonModule],
   templateUrl: './game-board.html',
   styleUrl: './game-board.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
 })
 export class GameBoard implements OnInit, OnDestroy {
@@ -40,7 +41,7 @@ export class GameBoard implements OnInit, OnDestroy {
 
   private subscription?: Subscription;
 
-  constructor(private gameService: Game) {}
+  private gameService = inject(Game);
 
   ngOnInit(): void {
     this.subscription = this.gameService.getGameState().subscribe((state) => {

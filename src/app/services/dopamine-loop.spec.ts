@@ -391,6 +391,7 @@ describe('DopamineLoopService - TDD', () => {
   });
 
   describe('Integration - Full Dopamine Loop Cycle', () => {
+    // eslint-disable-next-line @typescript-eslint/require-await
     it('should execute complete 3-phase cycle', async () => {
       // Phase 1: Anticipation
       const anticipation = service.buildAnticipation(90);

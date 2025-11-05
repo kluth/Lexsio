@@ -178,7 +178,7 @@ export class ScoreService {
   private loadHighscores(): Highscore[] {
     try {
       const stored = localStorage.getItem(this.STORAGE_KEY_SCORES);
-      return stored ? JSON.parse(stored) : [];
+      return stored ? (JSON.parse(stored) as Highscore[]) : [];
     } catch {
       return [];
     }
@@ -219,7 +219,7 @@ export class ScoreService {
     try {
       const stored = localStorage.getItem(this.STORAGE_KEY_PROFILE);
       if (stored) {
-        return JSON.parse(stored);
+        return JSON.parse(stored) as PlayerProfile;
       }
       // eslint-disable-next-line no-empty
     } catch {}
@@ -359,7 +359,7 @@ export class ScoreService {
     try {
       const stored = localStorage.getItem(this.STORAGE_KEY_TOURNAMENTS);
       if (stored) {
-        const tournaments: Tournament[] = JSON.parse(stored);
+        const tournaments = JSON.parse(stored) as Tournament[];
 
         // Update tournament statuses
         tournaments.forEach((t) => {

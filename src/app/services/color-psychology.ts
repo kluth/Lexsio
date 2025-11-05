@@ -32,6 +32,7 @@ export class ColorPsychologyService {
   /**
    * Initialize all predefined themes based on color psychology research
    */
+  // eslint-disable-next-line max-lines-per-function
   private initializeThemes(): void {
     this.themes = [
       // Focus Mode - Warm, inviting hues (2025 trend)
@@ -418,7 +419,9 @@ export class ColorPsychologyService {
   getThemePreference(): ThemePreference {
     const stored = localStorage.getItem(this.STORAGE_KEY);
     if (stored) {
-      const parsed = JSON.parse(stored);
+      const parsed = JSON.parse(stored) as Omit<ThemePreference, 'lastUpdated'> & {
+        lastUpdated: string;
+      };
       return {
         ...parsed,
         lastUpdated: new Date(parsed.lastUpdated),
@@ -526,7 +529,7 @@ export class ColorPsychologyService {
     const stored = localStorage.getItem(this.STORAGE_KEY);
     if (stored) {
       try {
-        const preference: ThemePreference = JSON.parse(stored);
+        const preference = JSON.parse(stored) as ThemePreference;
         const theme = this.getThemeById(preference.themeId);
         if (theme) {
           this.currentTheme.set(theme);
@@ -541,6 +544,7 @@ export class ColorPsychologyService {
    * Get default theme
    */
   private getDefaultTheme(): ColorTheme {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
     return this.themes.find((t) => t.id === ThemeId.FOCUS) || this.themes[0];
   }
 }

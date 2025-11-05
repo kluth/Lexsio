@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 import { GameBoard } from './components/game-board/game-board';
@@ -13,6 +13,7 @@ type AppView = 'menu' | 'game' | 'highscores' | 'tournaments';
   imports: [CommonModule, RouterOutlet, GameBoard, GameMenu],
   templateUrl: './app.html',
   styleUrl: './app.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
 })
 export class App {
