@@ -78,80 +78,6 @@ jobs:
           configuration-path: '.github/auto-assign.yml'
         continue-on-error: true
 
-  # Performance budget check
-  performance-check:
-    name: Performance Budget
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build application
-        run: npm run build -- --base-href /lixso/
-
-      - name: Check bundle size
-        uses: andresz1/size-limit-action@v1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          skip_step: install
-        continue-on-error: true
-
-  # Lighthouse CI for performance metrics
-  lighthouse:
-    name: Lighthouse Performance
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build application
-        run: npm run build
-
-      - name: Run Lighthouse CI
-        uses: treosh/lighthouse-ci-action@v11
-        with:
-          urls: |
-            http://localhost:4200
-          uploadArtifacts: true
-          temporaryPublicStorage: true
-        continue-on-error: true
-
-  # Dependency review for security
-  dependency-review:
-    name: Dependency Review
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Dependency Review
-        uses: actions/dependency-review-action@v4
-        with:
-          fail-on-severity: moderate
-          comment-summary-in-pr: always
-        continue-on-error: true
-
   # Check for TODO/FIXME comments
   todo-check:
     name: Check TODOs
@@ -195,4 +121,57 @@ jobs:
         uses: crate-ci/typos@master
         with:
           files: ./src ./e2e *.md
+          config: ./.typos.toml
         continue-on-error: true
+
+  # Bundle size tracking
+  bundle-size:
+    name: Bundle Size Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build -- --base-href /lixso/
+
+      - name: Calculate and comment bundle size
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            const { execSync } = require('child_process');
+
+            try {
+              const distPath = 'dist/lixso-game/browser';
+              const totalSize = execSync(`du -sb ${distPath} | cut -f1`).toString().trim();
+              const totalSizeMB = (parseInt(totalSize) / 1024 / 1024).toFixed(2);
+
+              const files = fs.readdirSync(distPath)
+                .filter(f => f.endsWith('.js') || f.endsWith('.css'))
+                .map(f => {
+                  const stats = fs.statSync(path.join(distPath, f));
+                  return `- ${f}: ${(stats.size / 1024).toFixed(2)} KB`;
+                });
+
+              const comment = `## 📦 Bundle Size Report\n\n**Total Size**: ${totalSizeMB} MB\n\n### Files:\n${files.join('\n')}\n\n---\n*This is an automated comment*`;
+
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: comment
+              });
+            } catch (error) {
+              console.log('Error calculating bundle size:', error.message);
+            }

@@ -1,45 +1,50 @@
-# Auto-labeler configuration
+# Auto-labeler configuration for actions/labeler@v5
 # Labels PRs based on files changed
 
-# Documentation
 documentation:
-  - '**/*.md'
-  - 'docs/**/*'
+  - changed-files:
+    - any-glob-to-any-file: '**/*.md'
+  - changed-files:
+    - any-glob-to-any-file: 'docs/**/*'
 
-# Testing
 testing:
-  - 'e2e/**/*'
-  - 'src/**/*.spec.ts'
-  - 'playwright.config.ts'
-  - 'vitest.config.ts'
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'e2e/**/*'
+      - 'src/**/*.spec.ts'
+      - 'playwright.config.ts'
+      - 'vitest.config.ts'
 
-# CI/CD
 ci-cd:
-  - '.github/**/*'
+  - changed-files:
+    - any-glob-to-any-file: '.github/**/*'
 
-# Frontend
 frontend:
-  - 'src/**/*.html'
-  - 'src/**/*.scss'
-  - 'src/**/*.css'
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'src/**/*.html'
+      - 'src/**/*.scss'
+      - 'src/**/*.css'
 
-# Backend/Services
 services:
-  - 'src/app/services/**/*'
+  - changed-files:
+    - any-glob-to-any-file: 'src/app/services/**/*'
 
-# Components
 components:
-  - 'src/app/components/**/*'
+  - changed-files:
+    - any-glob-to-any-file: 'src/app/components/**/*'
 
-# Dependencies
 dependencies:
-  - 'package.json'
-  - 'package-lock.json'
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'package.json'
+      - 'package-lock.json'
 
-# Configuration
 configuration:
-  - '*.json'
-  - '*.yml'
-  - '*.yaml'
-  - '.editorconfig'
-  - '.gitignore'
+  - changed-files:
+    - any-glob-to-any-file:
+      - '*.json'
+      - '*.yml'
+      - '*.yaml'
+      - '.editorconfig'
+      - '.gitignore'

@@ -1,0 +1,23 @@
+# Typos spell checker configuration
+# https://github.com/crate-ci/typos
+
+[default]
+extend-ignore-re = [
+  # Technical terms and proper nouns
+  "AWS Braket",  # AWS Quantum computing service
+  "Braket",      # AWS Quantum computing service
+]
+
+[default.extend-words]
+# Technical terms that are spelled correctly
+Braket = "Braket"  # AWS Quantum computing service
+
+[files]
+extend-exclude = [
+  "node_modules/",
+  "dist/",
+  "coverage/",
+  ".angular/",
+  "*.lock",
+  "package-lock.json",
+]
