@@ -16,6 +16,8 @@
     "test:e2e:debug": "playwright test --debug",
     "test:e2e:report": "playwright show-report",
     "test:e2e:codegen": "playwright codegen http://localhost:4200",
+    "size": "size-limit",
+    "size:why": "size-limit --why",
     "lint": "echo 'Linting not configured yet'"
   },
   "prettier": {

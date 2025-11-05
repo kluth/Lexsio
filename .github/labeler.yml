@@ -1,0 +1,45 @@
+# Auto-labeler configuration
+# Labels PRs based on files changed
+
+# Documentation
+documentation:
+  - '**/*.md'
+  - 'docs/**/*'
+
+# Testing
+testing:
+  - 'e2e/**/*'
+  - 'src/**/*.spec.ts'
+  - 'playwright.config.ts'
+  - 'vitest.config.ts'
+
+# CI/CD
+ci-cd:
+  - '.github/**/*'
+
+# Frontend
+frontend:
+  - 'src/**/*.html'
+  - 'src/**/*.scss'
+  - 'src/**/*.css'
+
+# Backend/Services
+services:
+  - 'src/app/services/**/*'
+
+# Components
+components:
+  - 'src/app/components/**/*'
+
+# Dependencies
+dependencies:
+  - 'package.json'
+  - 'package-lock.json'
+
+# Configuration
+configuration:
+  - '*.json'
+  - '*.yml'
+  - '*.yaml'
+  - '.editorconfig'
+  - '.gitignore'
