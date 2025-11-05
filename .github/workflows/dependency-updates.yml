@@ -1,0 +1,93 @@
+name: Dependency Updates
+
+on:
+  schedule:
+    # Run every Monday at 9 AM UTC
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  # Auto-update dependencies
+  update-dependencies:
+    name: Update Dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Update npm dependencies
+        run: |
+          npm update
+          npm audit fix || true
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore: update npm dependencies'
+          title: 'chore: Automated dependency updates'
+          body: |
+            ## 🤖 Automated Dependency Updates
+
+            This PR updates npm dependencies to their latest compatible versions.
+
+            ### Changes
+            - Updated dependencies based on semver ranges in package.json
+            - Applied automatic security fixes from npm audit
+
+            ### Testing
+            - [ ] All tests pass
+            - [ ] Application builds successfully
+            - [ ] No breaking changes detected
+
+            **Note:** This PR was automatically created. Please review changes carefully before merging.
+          branch: automated-dependency-updates
+          delete-branch: true
+          labels: dependencies, automated
+
+  # Security audit
+  security-audit:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run security audit
+        run: npm audit --audit-level=moderate
+        continue-on-error: true
+
+      - name: Run npm outdated
+        run: npm outdated || true
+
+      - name: Check for vulnerabilities
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+        continue-on-error: true
+
+      - name: Upload Trivy results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results.sarif'
+        continue-on-error: true

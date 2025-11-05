@@ -1,0 +1,50 @@
+# Auto-labeler configuration for actions/labeler@v5
+# Labels PRs based on files changed
+
+documentation:
+  - changed-files:
+    - any-glob-to-any-file: '**/*.md'
+  - changed-files:
+    - any-glob-to-any-file: 'docs/**/*'
+
+testing:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'e2e/**/*'
+      - 'src/**/*.spec.ts'
+      - 'playwright.config.ts'
+      - 'vitest.config.ts'
+
+ci-cd:
+  - changed-files:
+    - any-glob-to-any-file: '.github/**/*'
+
+frontend:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'src/**/*.html'
+      - 'src/**/*.scss'
+      - 'src/**/*.css'
+
+services:
+  - changed-files:
+    - any-glob-to-any-file: 'src/app/services/**/*'
+
+components:
+  - changed-files:
+    - any-glob-to-any-file: 'src/app/components/**/*'
+
+dependencies:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'package.json'
+      - 'package-lock.json'
+
+configuration:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '*.json'
+      - '*.yml'
+      - '*.yaml'
+      - '.editorconfig'
+      - '.gitignore'
